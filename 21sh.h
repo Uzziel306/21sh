@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   21sh.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:37:11 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 16:11:21 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/02 17:50:15 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,21 @@
 # include <pwd.h>
 # include <uuid/uuid.h>
 # include <sys/wait.h>
+# include <sys/uio.h>
 # include <sys/types.h>
 # include <string.h>
 # include <unistd.h>
 # include "libft/libft.h"
 # include <fcntl.h>
+# include <term.h>
+# include <termios.h>
+# include <sys/ioctl.h>
+# include <signal.h>
+
+typedef struct		s_term
+{
+	struct termios	term;
+}					t_term;
 
 typedef struct		s_shll
 {
@@ -47,6 +57,7 @@ typedef struct		s_msh
 {
 	t_shll			sh;
 	t_axe			axe;
+	t_term			term;
 }					t_msh;
 
 /*
@@ -60,15 +71,13 @@ char				**ft_lst_to_mtx(t_list *e);
 /*
 ** cd command functions used in the proyect.. cd_command.c and cd_command_2.c
 */
+char				*cd(char **mtx, char *pwd);
 void				validation_cd_command(char **matrix, t_msh *f, t_list *e);
-void				cd_command_len_1(t_msh *f, t_list *e);
-void				cd_command(char *pwd, char	*old_pwd, t_list *e, t_msh *f);
-void				cd_command_minus(t_list *e);
-void				cd_command_home(t_msh *f, t_list *e);
-int					cutting_last_dir(char *path);
-int					simple_path(char *path, t_msh *f);
-char				*cd(char **mtx, char *pwd, t_msh *f, t_list *e);
+void				cd_command(char *pwd, char	*old_pwd, t_list *e);
 int					general(char *direction, char	*old_pwd, t_list *e);
+void				cd_command_minus(t_list *e);
+void				cd_command_home(t_list *e);
+void				cd_command_len_1(t_msh *f, t_list *e);
 /*
 ** echo command functions used in the proyect.. echo_command.c
 */
@@ -91,20 +100,18 @@ int					unset_env(t_list *e, char *name, int i);
 ** helper functions used in the proyect.. helper.c helper_2.c
 */
 int					ft_error_path(char *pwd);
-void				zap(t_msh *f);
 char				*get_last_part();
-void				ft_putmatrix(char **matrix);
 void				ft_printlst(t_list *e);
 void				free_shit(char *a, char *b, char *c);
-int					ft_matrixlen(char **matrix);
 int					ft_memdel_int(void **ap);
 int					ft_ismayus(int c);
 /*
 ** main functions used in the proyect.. main.c
 */
+char				*readline(void);
 void				get_command(char *str, t_msh *f, t_list *e);
-void				pre_get_command(char *str, t_msh *f, t_list *e);
 int					get_shell(t_msh *f);
+void				pre_get_command(char *str, t_msh *f, t_list *e);
 /*
 ** run commands functions used in the proyect.. run_command.c
 */
@@ -112,13 +119,18 @@ char				*get_path(t_list *e);
 void				executable(char **mtx, t_list *e);
 int					path_command(char **mtx, t_list *e);
 /*
-** exit function used in the proyect.. exit.c
+** exit functions used in the proyect.. exit.c
 */
 void				exitazo(t_list *e, t_msh *f);
-char				**ft_split_whitespaces(char *str);
 void				pwd(void);
-void				changing_pwd_oldpwd(char *new_pwd, char *old_pwd, t_list *e);
 char				*join_path(char *str, char *str2);
+void				changing_pwd_oldpwd(char *new_pwd, char *old_pwd, t_list *e);
 char				*cutting_last_path(char *str);
-void				ft_strswap(char **a, char **b);
+/*
+** readterm functions used in the proyect.. exit.c
+*/
+void				starting_env(t_msh *f);
+char				*get_line(void);
+void				readterm(t_msh *f);
+void				put_cursor(char c);
 #endif

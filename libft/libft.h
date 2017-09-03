@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asolis <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/09 21:11:34 by asolis            #+#    #+#             */
-/*   Updated: 2017/06/22 05:48:00 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:50:27 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,11 @@ char				*ft_strjoin(char const *s1, char const *s2);
 char				*ft_itoa(int n);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				**ft_strsplit(char const *s, char c);
+char				**ft_split_whitespaces(char *str);
 size_t				ft_strlen(const char *s);
 size_t				ft_strlennum(char *str);
 size_t				ft_strlcat(char *dst, const char *src, size_t size);
+int					ft_matrixlen(char **matrix);
 int					get_next_line(const int fd, char **line);
 int					ft_strcmp(const char *s1, const char *s2);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -120,5 +122,6 @@ void				ft_cursor_goto(int x, int y);
 void				ft_termcmd(char *str);
 void				ft_clrscreen(int rows);
 void				ft_error(char *error);
+void				ft_strswap(char **a, char **b);
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:30:05 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 17:18:24 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/02 19:38:51 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 char				*readline(void)
 {
@@ -95,13 +95,15 @@ void				pre_get_command(char *str, t_msh *f, t_list *e)
 		get_command(str, f, e);
 }
 
-int					main(void)
+int					main(int ac, char **ag)
 {
 	char			*command;
 	t_msh			f;
 	t_list			*e;
 	char 			*pwd;
 
+	ac += 1;
+	ag += 1;
 	ft_bzero(&f, sizeof(t_msh));
 	get_shell(&f);
 	e = get_env(&f);
@@ -110,7 +112,9 @@ int					main(void)
 		pwd = get_last_part();
 		ft_printfcolor("%s%s%s", "@", 33, f.sh.p_user, 33, "$>", 33);
 		ft_printfcolor("%s%s%s", "*[", 34, pwd, 31, "]* ", 34);
-		command = readline();
+		readterm(&f);
+		command = get_line();
+		printf("!!!!%s\n", command);
 		if (ft_strcmp(command, "exit") == 0)
 			break ;
 		if (ft_strlen(command))

@@ -6,15 +6,15 @@
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:19:36 by asolis            #+#    #+#             */
-/*   Updated: 2017/08/31 18:11:50 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 20:14:32 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
-void	exitazo(t_list *e, t_msh *f)
+void				exitazo(t_list *e, t_msh *f)
 {
-	int	i;
+	int				i;
 
 	i = 0;
 	ft_memdel((void**)&f->sh.p_home);
@@ -51,7 +51,6 @@ void				changing_pwd_oldpwd(char *new_pwd, char *old_pwd, t_list *e)
 	ft_lstedit(e, "OLDPWD", old_pwd);
 }
 
-
 char				*cutting_last_path(char *str)
 {
 	char			*i;
@@ -60,13 +59,4 @@ char				*cutting_last_path(char *str)
 	i = ft_strrchr(str, '/');
 	res = ft_strsub(str, 0, ft_strlen(str) - ft_strlen(i));
 	return (res);
-}
-
-void				ft_strswap(char **a, char **b)
-{
-	char *c;
-
-	c = *a;
-	*a = *b;
-	*b = c;
 }

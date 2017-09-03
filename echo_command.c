@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   echo_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asolis <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:18:55 by asolis            #+#    #+#             */
-/*   Updated: 2017/06/22 05:18:56 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:56:37 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 int			echo(char *c)
 {

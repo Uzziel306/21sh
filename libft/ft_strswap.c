@@ -1,34 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helper.c                                           :+:      :+:    :+:   */
+/*   ft_strswap.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:22:40 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 19:55:54 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:38:48 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "21sh.h"
+#include "libft.h"
 
-int			ft_error_path(char *pwd)
+void				ft_strswap(char **a, char **b)
 {
-	ft_printfbasic("-bash: cd: ");
-	ft_printfbasic("%s", pwd);
-	ft_printfbasic(": No such file or directory\n");
-	return (0);
-}
+	char *c;
 
-void		ft_printlst(t_list *e)
-{
-	t_list	*tmp;
-
-	tmp = e;
-	while (tmp)
-	{
-		ft_printfbasic("%s\n", tmp->content);
-		tmp = tmp->next;
-	}
-	free(tmp);
+	c = *a;
+	*a = *b;
+	*b = c;
 }

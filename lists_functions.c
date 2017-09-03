@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   lists_functions.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asolis <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:24:41 by asolis            #+#    #+#             */
-/*   Updated: 2017/06/22 05:28:59 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:55:55 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 void		ft_lstsearch(t_list *e, char *name)
 {

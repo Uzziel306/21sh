@@ -77,7 +77,11 @@ SRC = ft_bzero.c \
 		ft_cursor_goto.c\
 		ft_termcmd.c\
 		ft_clrscreen.c\
-		ft_error.c
+		ft_error.c \
+		ft_strswap.c \
+		ft_split_whitespaces.c \
+		ft_matrixlen.c
+
 OBJ = $(SRC:.c=.o)
 
 # all rule

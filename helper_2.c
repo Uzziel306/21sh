@@ -6,11 +6,11 @@
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:23:45 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 17:04:36 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:55:54 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 char		*get_last_part()
 {

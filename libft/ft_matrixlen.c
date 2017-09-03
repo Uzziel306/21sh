@@ -1,34 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helper.c                                           :+:      :+:    :+:   */
+/*   ft_matrixlen.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:22:40 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 19:55:54 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 19:49:31 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "21sh.h"
+#include "libft.h"
 
-int			ft_error_path(char *pwd)
+int			ft_matrixlen(char **matrix)
 {
-	ft_printfbasic("-bash: cd: ");
-	ft_printfbasic("%s", pwd);
-	ft_printfbasic(": No such file or directory\n");
-	return (0);
-}
+	int		i;
 
-void		ft_printlst(t_list *e)
-{
-	t_list	*tmp;
-
-	tmp = e;
-	while (tmp)
-	{
-		ft_printfbasic("%s\n", tmp->content);
-		tmp = tmp->next;
-	}
-	free(tmp);
+	i = 0;
+	while (matrix[i] != NULL)
+		i++;
+	return (i);
 }

@@ -6,11 +6,11 @@
 /*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 17:53:15 by asolis            #+#    #+#             */
-/*   Updated: 2017/09/01 17:12:04 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 20:09:41 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 int			general(char *direction, char	*old_pwd, t_list *e)
 {
@@ -60,7 +60,7 @@ void		cd_command_minus(t_list *e)
 	ft_memdel((void**)&old_pwd);
 }
 
-void		cd_command_home(t_msh *f, t_list *e)
+void		cd_command_home(t_list *e)
 {
 	char	*old_pwd;
 

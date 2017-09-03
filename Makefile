@@ -1,4 +1,5 @@
-NAME	= 21sh
+# Name of the program
+NAME = 21sh
 
 SRC		=	main.c \
 			unsetenv.c \
@@ -10,12 +11,12 @@ SRC		=	main.c \
 			get_env.c \
 			helper_2.c \
 			lists_functions.c \
-			ft_split_whitespaces.c \
-			exit.c
+			exit.c \
+			readterm.c
 
 OBJ		= $(SRC:.c=.o)
 
-# CFLAGS	= -Wall -Wextra -Werror
+CFLAGS	= -Wall -Wextra -Werror
 
 CC		= gcc
 
@@ -23,13 +24,13 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C libft/
-	@$(CC) $(OBJ) -o $(NAME) -L libft/ -lft
+	@$(CC) $(OBJ) -ltermcap -o $(NAME) -L libft/ -lft
 	@echo "\033[32m21sh: Built 21sh. (˘▾˘) \033[0m"
 
 clean:
 	@make -C libft/ clean
 	@rm -rf $(OBJ)
-	@echo "\033[21sh: Cleaned up object files. (˘▾˘) \033[0m"
+	@echo "\033[32m21sh: Cleaned up object files. (˘▾˘) \033[0m"
 
 fclean: clean
 	@$(MAKE) -C ./libft/ fclean

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   run_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asolis <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: asolis <asolis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/22 05:33:53 by asolis            #+#    #+#             */
-/*   Updated: 2017/06/28 17:56:23 by asolis           ###   ########.fr       */
+/*   Updated: 2017/09/01 20:12:32 by asolis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "21sh.h"
 
 static int		forkzazo(char **matrix, t_list *e, char *path)
 {
@@ -31,7 +31,7 @@ static int		forkzazo(char **matrix, t_list *e, char *path)
 	}
 	if (pid > 0)
 		pid = wait(0);
-	ft_free_mtx(env);;
+	ft_free_mtx(env);
 	return (0);
 }
 
