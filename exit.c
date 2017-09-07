@@ -22,6 +22,7 @@ void				exitazo(t_list *e, t_msh *f)
 	ft_memdel((void**)&f->axe.end);
 	ft_memdel((void**)&f->axe.tmp);
 	ft_lstdel(&e, ft_bzero);
+	ft_termcmd("ve");
 	exit(3);
 }
 

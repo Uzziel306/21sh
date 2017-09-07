@@ -32,3 +32,12 @@ void		ft_printlst(t_list *e)
 	}
 	free(tmp);
 }
+
+t_msh		*get_t_msh(t_msh *f)
+{
+	static	t_msh *h = NULL;
+
+	if (f)
+		h = f;
+	return (h);
+}

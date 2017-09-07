@@ -30,10 +30,16 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <signal.h>
+# include <dirent.h>
 
 typedef struct		s_term
 {
 	struct termios	term;
+	int				tab_cursor;
+	int				shll_cursor;
+	int				max;
+	int				win_x;
+	int				win_y;
 }					t_term;
 
 typedef struct		s_shll
@@ -105,6 +111,7 @@ void				ft_printlst(t_list *e);
 void				free_shit(char *a, char *b, char *c);
 int					ft_memdel_int(void **ap);
 int					ft_ismayus(int c);
+t_msh				*get_t_msh(t_msh *f);
 /*
 ** main functions used in the proyect.. main.c
 */
@@ -127,10 +134,10 @@ char				*join_path(char *str, char *str2);
 void				changing_pwd_oldpwd(char *new_pwd, char *old_pwd, t_list *e);
 char				*cutting_last_path(char *str);
 /*
-** readterm functions used in the proyect.. exit.c
+** readterm functions used in the proyect.. readterm.c
 */
 void				starting_env(t_msh *f);
-char				*get_line(void);
-void				readterm(t_msh *f);
+char				*get_lines(void);
+char				*readterm(void);
 void				put_cursor(char c);
 #endif

@@ -61,6 +61,7 @@ int					get_shell(t_msh *f)
 	extern char		**environ;
 	int				i;
 
+	get_t_msh(f);
 	i = -1;
 	while (environ[++i] != NULL)
 	{
@@ -93,6 +94,7 @@ void				pre_get_command(char *str, t_msh *f, t_list *e)
 	}
 	else
 		get_command(str, f, e);
+	f->term.tab_cursor = 0;
 }
 
 int					main(int ac, char **ag)
@@ -107,14 +109,13 @@ int					main(int ac, char **ag)
 	ft_bzero(&f, sizeof(t_msh));
 	get_shell(&f);
 	e = get_env(&f);
+	starting_env(&f);
 	while (42)
 	{
 		pwd = get_last_part();
 		ft_printfcolor("%s%s%s", "@", 33, f.sh.p_user, 33, "$>", 33);
 		ft_printfcolor("%s%s%s", "*[", 34, pwd, 31, "]* ", 34);
-		readterm(&f);
-		command = get_line();
-		printf("!!!!%s\n", command);
+		command = readterm(&f);
 		if (ft_strcmp(command, "exit") == 0)
 			break ;
 		if (ft_strlen(command))

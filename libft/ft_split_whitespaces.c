@@ -25,7 +25,8 @@ int			ft_count_chars(char *str)
 		return (0);
 	while (str[i])
 	{
-		while (str[i] != '\t' && str[i] != ' ' && str[i] != '\n' && str[i])
+		while (str[i] != '\t' && str[i] != ' ' && str[i] != '\n' && str[i] &&
+str[i] != '\v' && str[i] != '\f' && str[i] != '\r')
 		{
 			i++;
 			sp = 1;

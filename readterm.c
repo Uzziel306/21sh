@@ -49,7 +49,71 @@ void		printing_line(char *line, int cursor)
 		put_cursor(' ');
 }
 
-char		*get_line(void)
+int		len_dir(char *pwd, t_msh *f)
+{
+	int		i;
+	struct dirent	*pdirent;
+	DIR				*pep;
+	int				tmp;
+
+	pep = opendir(pwd);
+	i = 0;
+
+	while ((pdirent = readdir(pep)) != NULL)
+	{
+		if (pdirent->d_name[0] == '.')
+			continue ;
+		if (f->term.max < (tmp = (int)ft_strlen(pdirent->d_name)))
+			f->term.max = tmp;
+		i++;
+	}
+	closedir(pep);
+	return (i);
+}
+
+void		auto_complete(void)
+{
+	struct dirent	*pdirent;
+	DIR				*pdir;
+	char			*pwd;
+	static int		i;
+	t_msh			*f;
+	int				len;
+	struct winsize	win;
+
+	// ft_termcmd("ce");
+	f = get_t_msh(NULL);
+	i = 0;
+	pwd = getcwd(NULL, 0);
+	len = len_dir(pwd, f);
+	f->term.win_x = win.ws_col;
+	f->term.win_y = win.ws_row;
+	pdir = opendir(pwd);
+	ft_putchar_fd('\n', 2);
+	ft_termcmd("cd");
+	while ((pdirent = readdir(pdir)) != NULL)
+	{
+		// printf("%s\n", pdirent->d_name);
+		if (pdirent->d_name[0] != '.')
+		{
+			if (i == f->term.tab_cursor)
+				ft_termcmd("so");
+			ft_printfcolor("%s ", pdirent->d_name, 35);
+			ft_putchar_fd(' ', 2);
+			ft_termcmd("se");
+			i++;
+		}
+	}
+	ft_termcmd("rc");
+	f->term.tab_cursor += 1;
+	if (f->term.tab_cursor == len)
+		f->term.tab_cursor = 0;
+	ft_putchar_fd('\n', 2);
+	ft_strdel(&pwd);
+	closedir(pdir);
+	}
+
+char		*get_lines(void)
 {
 	long	key;
 	char	c;
@@ -57,24 +121,49 @@ char		*get_line(void)
 	char	*line;
 	int		i;
 	int		cursor;
+	// t_list	*v;
 
 	cursor = 0;
 	ret = 0;
 	i = 0;
 	line = ft_strnew(4080);
-	// line = NULL;
-	// put_cursor(' ');
-	while ((ret += read(0, &c, sizeof(char)) != 0))
+
+	ft_termcmd("sc");
+	put_cursor(' ');
+	while ((read(0, &key, sizeof(int))) != 0)
 	{
-		key = (long)c;
+		ft_termcmd("rc");
+		c = (char)key;
+		// ft_termcmd("dl");
+		// ft_termcmd("mr");
 		// printf("%ld\n", key);
-		ft_termcmd("sc");
+		if (4299447067 == key)
+			continue;
 		ft_termcmd("ce");
-		// key = (long)c;
-		if (key == 10) //enter
-			break ;
-		if (key == 127)
+		if (key == 9) //tab
 		{
+			ft_termcmd("sc");
+			ft_termcmd("ce");
+			ft_putstr_fd(line, 2);
+			// ft_termcmd("sc");
+			auto_complete();
+			continue ;
+		}
+		// if (key == 27 || key == 91)
+		// 	continue ;
+		if (c == '\n') //enter
+		{
+			// ft_termcmd("rc");
+			ft_termcmd("cd");
+			break ;
+		}
+		if (c == 0x7f) //del
+		{
+			if (i == 0)
+			{
+				put_cursor(' ');
+				continue ;
+			}
 			ft_termcmd("dm");
 			line[i - 1] = '\0';
 			printing_line(line, i);
@@ -82,14 +171,34 @@ char		*get_line(void)
 			i --;
 			continue ;
 		}
-		// if (key == 68)
-		// {
-		// 	printing_line(line, i - 2);
+		if (key == 140734606957339) //arriba
+		{
+			printing_line(line, i);
 		// 	ft_termcmd("rc");
-		// 	continue ;
-		// }
-		line[i] = c;
-		line[i + 1] = '\0';
+			continue ;
+		}
+		if (key == 140734607088411) // derecha
+		{
+			printing_line(line, i);
+		// 	ft_termcmd("rc");
+			continue ;
+		}
+		if (key == 140734607022875) //abajo
+		{
+			printing_line(line, i);
+		// 	ft_termcmd("rc");
+			continue ;
+		}
+		if (key == 140734607153947) //izquierda
+		{
+			printing_line(line, i);
+			continue ;
+		}
+		if (c >= 32 && c <= 126)
+		{
+			line[i] = c;
+			line[i + 1] = '\0';
+		}
 		i++;
 		// // ft_putnbr_fd(i, 2);
 		// // ft_putchar_fd('\n', 2);
@@ -101,17 +210,21 @@ char		*get_line(void)
 		//
 		// // ft_clrscreen(1);
 		key = 0;
-		ft_termcmd("rc");
 	}
-	ft_termcmd("ve");
+	// ft_putchar_fd('!', 2);
 	ft_putstr_fd(line, 2);
+	// ft_putchar_fd('!', 2);
+	ft_putchar_fd('\n', 2);
 	// ft_termcmd("dm");
 	return (line);
 }
 
-void		readterm(t_msh *f)
+char			*readterm(void)
 {
-	starting_env(f);
-	get_line();
-	exit (3);
+	char		*line;
+	t_list	*x;
+
+	x = NULL;
+	line = get_lines();
+	return (line);
 }
