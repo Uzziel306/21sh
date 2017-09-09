@@ -12,7 +12,8 @@ SRC		=	main.c \
 			helper_2.c \
 			lists_functions.c \
 			exit.c \
-			readterm.c
+			readterm.c \
+			autocomplete.c
 
 OBJ		= $(SRC:.c=.o)
 

@@ -61,6 +61,7 @@ int					get_shell(t_msh *f)
 	extern char		**environ;
 	int				i;
 
+	f->term.x = NULL;
 	get_t_msh(f);
 	i = -1;
 	while (environ[++i] != NULL)
@@ -94,7 +95,6 @@ void				pre_get_command(char *str, t_msh *f, t_list *e)
 	}
 	else
 		get_command(str, f, e);
-	f->term.tab_cursor = 0;
 }
 
 int					main(int ac, char **ag)
@@ -120,7 +120,8 @@ int					main(int ac, char **ag)
 			break ;
 		if (ft_strlen(command))
 			pre_get_command(command, &f, e);
-		ft_memdel((void**)&command);
+		ft_strdel(&command);
+		f.term.tab_cursor = 0;
 		ft_strdel(&pwd);
 	}
 	ft_lstdel(&e, ft_bzero);

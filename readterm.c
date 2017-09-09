@@ -49,115 +49,72 @@ void		printing_line(char *line, int cursor)
 		put_cursor(' ');
 }
 
-int		len_dir(char *pwd, t_msh *f)
+char		*get_lines(t_msh *f)
 {
-	int		i;
-	struct dirent	*pdirent;
-	DIR				*pep;
-	int				tmp;
-
-	pep = opendir(pwd);
-	i = 0;
-
-	while ((pdirent = readdir(pep)) != NULL)
-	{
-		if (pdirent->d_name[0] == '.')
-			continue ;
-		if (f->term.max < (tmp = (int)ft_strlen(pdirent->d_name)))
-			f->term.max = tmp;
-		i++;
-	}
-	closedir(pep);
-	return (i);
-}
-
-void		auto_complete(void)
-{
-	struct dirent	*pdirent;
-	DIR				*pdir;
-	char			*pwd;
-	static int		i;
-	t_msh			*f;
-	int				len;
-	struct winsize	win;
-
-	// ft_termcmd("ce");
-	f = get_t_msh(NULL);
-	i = 0;
-	pwd = getcwd(NULL, 0);
-	len = len_dir(pwd, f);
-	f->term.win_x = win.ws_col;
-	f->term.win_y = win.ws_row;
-	pdir = opendir(pwd);
-	ft_putchar_fd('\n', 2);
-	ft_termcmd("cd");
-	while ((pdirent = readdir(pdir)) != NULL)
-	{
-		// printf("%s\n", pdirent->d_name);
-		if (pdirent->d_name[0] != '.')
-		{
-			if (i == f->term.tab_cursor)
-				ft_termcmd("so");
-			ft_printfcolor("%s ", pdirent->d_name, 35);
-			ft_putchar_fd(' ', 2);
-			ft_termcmd("se");
-			i++;
-		}
-	}
-	ft_termcmd("rc");
-	f->term.tab_cursor += 1;
-	if (f->term.tab_cursor == len)
-		f->term.tab_cursor = 0;
-	ft_putchar_fd('\n', 2);
-	ft_strdel(&pwd);
-	closedir(pdir);
-	}
-
-char		*get_lines(void)
-{
-	long	key;
 	char	c;
-	int		ret;
 	char	*line;
 	int		i;
-	int		cursor;
-	// t_list	*v;
 
-	cursor = 0;
-	ret = 0;
 	i = 0;
 	line = ft_strnew(4080);
 
 	ft_termcmd("sc");
 	put_cursor(' ');
-	while ((read(0, &key, sizeof(int))) != 0)
+	while ((read(0, &c, sizeof(char))) != 0)
 	{
 		ft_termcmd("rc");
-		c = (char)key;
-		// ft_termcmd("dl");
-		// ft_termcmd("mr");
-		// printf("%ld\n", key);
-		if (4299447067 == key)
-			continue;
-		ft_termcmd("ce");
-		if (key == 9) //tab
+		if (c == 0x43 || c == 0x44) //arrows
 		{
+			i -= 2;
+			continue ;
+		}
+		else if (c == 0x41 || c == 0x42)
+		{
+			if (c == 0x41)
+				i -= 3;
+			else
+				i -= 2;
+			if (c == 0x42 && f->term.history_cursor == 0)
+			{
+				ft_termcmd("bl");
+				continue ;
+			}
+			else if (c == 0x42 && f->term.history_cursor > 0)
+				f->term.history_cursor -= 1;
+			else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
+				f->term.history_cursor = 0;
+			print_history(line, f);
+			i = ft_strlen(line);
+		}
+		ft_termcmd("ce");
+		if (c == 0x09) //tab
+		{
+			if (!(ft_strlen(line)))
+			{
+				put_cursor(' ');
+				continue ;
+			}
+			f->term.tab_flag = 1;
 			ft_termcmd("sc");
 			ft_termcmd("ce");
 			ft_putstr_fd(line, 2);
 			// ft_termcmd("sc");
-			auto_complete();
+			auto_complete(line);
 			continue ;
 		}
-		// if (key == 27 || key == 91)
-		// 	continue ;
-		if (c == '\n') //enter
+		else if (c == '\n') //enter
 		{
 			// ft_termcmd("rc");
 			ft_termcmd("cd");
+			if (f->term.tab_flag == 1)
+			{
+				f->term.tab_flag = 0;
+				line = get_autocomplete(line, f);
+				break ;
+			}
 			break ;
 		}
-		if (c == 0x7f) //del
+		else if (c == 0x7f) //del
 		{
 			if (i == 0)
 			{
@@ -171,28 +128,13 @@ char		*get_lines(void)
 			i --;
 			continue ;
 		}
-		if (key == 140734606957339) //arriba
+		else if (c == 0x1b) //esc
 		{
-			printing_line(line, i);
-		// 	ft_termcmd("rc");
-			continue ;
-		}
-		if (key == 140734607088411) // derecha
-		{
-			printing_line(line, i);
-		// 	ft_termcmd("rc");
-			continue ;
-		}
-		if (key == 140734607022875) //abajo
-		{
-			printing_line(line, i);
-		// 	ft_termcmd("rc");
-			continue ;
-		}
-		if (key == 140734607153947) //izquierda
-		{
-			printing_line(line, i);
-			continue ;
+			if (f->term.tab_flag == 1)
+			{
+				ft_termcmd("cd");
+				f->term.tab_flag = 0;
+			}
 		}
 		if (c >= 32 && c <= 126)
 		{
@@ -200,31 +142,64 @@ char		*get_lines(void)
 			line[i + 1] = '\0';
 		}
 		i++;
-		// // ft_putnbr_fd(i, 2);
-		// // ft_putchar_fd('\n', 2);
+		// ft_putnbr_fd(i, 2);
 		printing_line(line, i);
-		// // ft_putnbr_fd(key, 2);
-		// // if (key == 2791)
-		// // 	ft_termcmd("bt");
-		// // ft_putchar_fd(c, 2);
-		//
-		// // ft_clrscreen(1);
-		key = 0;
 	}
-	// ft_putchar_fd('!', 2);
 	ft_putstr_fd(line, 2);
-	// ft_putchar_fd('!', 2);
 	ft_putchar_fd('\n', 2);
-	// ft_termcmd("dm");
 	return (line);
 }
 
-char			*readterm(void)
+void			history(char *line, t_msh *f)
+{
+	t_list		*tmp;
+	t_list		*tmp2;
+
+	tmp2 = f->term.x;
+	if (tmp2 != NULL)
+	{
+		while (tmp2)
+		{
+			if ((ft_strcmp(line, tmp2->content) == 0))
+				return ;
+			tmp2 = tmp2->next;
+		}
+	}
+	f->term.history_len += 1;
+	tmp = ft_lstnew(line, ft_strlen(line) + 1);
+	ft_lstaddback(&f->term.x, tmp);
+}
+
+char			*print_history(char *line, t_msh *f)
+{
+	int			i;
+	t_list		*tmp;
+
+
+	//arreglar el history, arrgla el loop de la link list del history
+	i = 0;
+	tmp = f->term.x;
+	while (tmp)
+	{
+		printf("%s\n", f->term.x->content);
+		if (i == f->term.history_cursor)
+		{
+			ft_strdel(&line);
+			f->term.history_cursor = 0;
+			exit (0);
+			return (f->term.x->content);
+		}
+		i++;
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+char			*readterm(t_msh *f)
 {
 	char		*line;
-	t_list	*x;
 
-	x = NULL;
-	line = get_lines();
+	line = get_lines(f);
+	history(line, f);
 	return (line);
 }

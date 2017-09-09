@@ -36,10 +36,14 @@ typedef struct		s_term
 {
 	struct termios	term;
 	int				tab_cursor;
+	int				history_cursor;
+	int				history_len;
 	int				shll_cursor;
 	int				max;
 	int				win_x;
 	int				win_y;
+	int				tab_flag;
+	t_list			*x;
 }					t_term;
 
 typedef struct		s_shll
@@ -137,7 +141,14 @@ char				*cutting_last_path(char *str);
 ** readterm functions used in the proyect.. readterm.c
 */
 void				starting_env(t_msh *f);
-char				*get_lines(void);
-char				*readterm(void);
+char				*get_lines(t_msh *f);
+char				*readterm(t_msh *f);
 void				put_cursor(char c);
+/*
+** auto_complete functions used in the proyect.. auto_complete.c
+*/
+int					len_dir(char *pwd, t_msh *f);
+char				*auto_complete(char *line);
+char				*get_autocomplete(char *line, t_msh *f);
+char				*print_history(char *line, t_msh *f);
 #endif
