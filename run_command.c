@@ -94,12 +94,15 @@ void			executable(char **mtx, t_list *e)
 	char		*tmp;
 	char		*tmp2;
 	char		*tmp3;
+	char		*pwd;
 
+	pwd = getcwd(NULL, 0);
 	tmp2 = ft_strsub(mtx[0], 2, ft_strlen(mtx[0]));
-	tmp3 = ft_strjoin(getcwd(NULL, 0), "/");
+	tmp3 = ft_strjoin(pwd, "/");
 	tmp = ft_strjoin(tmp3, tmp2);
 	forkzazo(mtx, e, tmp);
 	ft_memdel((void**)&tmp);
 	ft_memdel((void**)&tmp2);
 	ft_memdel((void**)&tmp3);
+	ft_memdel((void**)&pwd);
 }

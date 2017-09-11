@@ -30,6 +30,12 @@
 # include <sys/ioctl.h>
 # include <signal.h>
 
+typedef struct		s_line
+{
+	char			content;
+	struct s_line	*next;
+}					t_line;
+
 typedef struct		s_list
 {
 	void			*content;

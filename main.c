@@ -109,7 +109,7 @@ int					main(int ac, char **ag)
 	ft_bzero(&f, sizeof(t_msh));
 	get_shell(&f);
 	e = get_env(&f);
-	starting_env(&f);
+	starting_env();
 	while (42)
 	{
 		pwd = get_last_part();

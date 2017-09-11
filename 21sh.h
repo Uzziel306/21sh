@@ -32,13 +32,23 @@
 # include <signal.h>
 # include <dirent.h>
 
+# define KEY_LEFT		4479771
+# define KEY_UP			4283163
+# define KEY_RIGHT		4414235
+# define KEY_DOWN		4348699
+# define KEY_ENTER		10
+# define KEY_TAB		9
+# define KEY_DEL		127
+# define KEY_ESC		27
+
 typedef struct		s_term
 {
 	struct termios	term;
 	int				tab_cursor;
 	int				history_cursor;
 	int				history_len;
-	int				shll_cursor;
+	int				ln_cursor;
+	int				ln_len;
 	int				max;
 	int				win_x;
 	int				win_y;
@@ -151,4 +161,13 @@ int					len_dir(char *pwd, t_msh *f);
 char				*auto_complete(char *line);
 char				*get_autocomplete(char *line, t_msh *f);
 char				*print_history(char *line, t_msh *f);
+/*
+** lst_line_functions functions used in the proyect.. t_line_functions.c
+*/
+void				ft_lstaddnthline(t_line **e, t_line *new, int nb);
+void				ft_lstaddbackline(t_line **alst, t_line *new);
+char				*ft_lst_to_str(t_line **line, t_msh *f);
+char				*get_char(t_line **l, t_msh *f, char c, char *line);
+void				ft_lstdeln(t_line **alst);
+void				ft_lstdeletenodeline(t_line *e, int nb);
 #endif

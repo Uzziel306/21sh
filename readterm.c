@@ -12,7 +12,8 @@ void		starting_env(void)
 		ft_error("getting the TERM enviroment");
 	if (tcgetattr(0, &term) != 0)
 		ft_error("didn't store the attributes of termios structure");
-	term.c_lflag &= ~(ICANON | ECHO);
+	term.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT
+			| ECHOKE | ICRNL);
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSADRAIN, &term);
@@ -46,62 +47,76 @@ void		printing_line(char *line, int cursor)
 		}
 		ft_putchar_fd(line[i], 2);
 	}
-	if (flag != 1)
+	if (flag == 0)
 		put_cursor(' ');
 }
 
 char		*get_lines(t_msh *f)
 {
-	char	c;
+	int		c;
 	char	*line;
-	int		i;
+	t_line	*l;
+	int		flag;
+	long	key;
 
-	i = 0;
-	line = ft_strnew(4080);
-
+	l = NULL;
+	line = NULL;
 	ft_termcmd("sc");
 	put_cursor(' ');
-	while ((read(0, &c, sizeof(char))) != 0)
+	while ((read(0, &c, sizeof(int))) != 0)
 	{
+		// ft_putchar_fd(c, 2);
+		// printf("%d\n", c);
+		// if (c >= 32 && c <= 126)
+		// 	flag = 0;
+		// else
+		// 	flag = 1;
 		ft_termcmd("rc");
-		if (c == 0x43 || c == 0x44) //arrows
+		if (c == KEY_LEFT || c == KEY_RIGHT) //arrows
 		{
-			i -= 2;
-			continue ;
+			if (c == KEY_LEFT && f->term.ln_len == 0)
+			{
+				ft_termcmd("bl");
+				continue ;
+			}
+			else if (c == KEY_LEFT && f->term.ln_len > 0)
+				f->term.ln_cursor -= 1;
+			else if (c == KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
+				f->term.ln_cursor += 1;
 		}
-		if (c == 0x50)
-			printf("rico\n" );
-		else if (c == 0x41 || c == 0x42) //up down
-		{
-			if (c == 0x41)
-				i -= 3;
-			else
-				i -= 2;
-			// if (c == 0x42 && f->term.history_cursor == 0)
-			// {
-			// 	printf("lolas\n");
-			// 	ft_termcmd("bl");
-			// 	continue ;
-			// }
-			// else if (c == 0x42 && f->term.history_cursor > 0)
-			// 	f->term.history_cursor -= 1;
-			// else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
-			// 	f->term.history_cursor = 0;
-			// else if (c == 0x41 && f->term.history_cursor < f->term.history_len)
-			// 	f->term.history_cursor += 1;
-			// if (!(line = print_history(line, f)))
-			// {
-			// 	i = 0;
-			// 	continue ;
-			// }
-			// i = ft_strlen(line);
-		}
+		// if (c == 0x50)
+		// 	printf("rico\n" );
+		// if (c == 0x41 || c == 0x42) //up down
+		// {
+		// 	ft_putstr_fd("up/donw\n", 2);
+		// 	continue ;
+		// }
+		// 	// if (c == 0x42 && f->term.history_cursor == 0)
+		// 	// {
+		// 	// 	printf("lolas\n");
+		// 	// 	ft_termcmd("bl");
+		// 	// 	continue ;
+		// 	// }
+		// 	// else if (c == 0x42 && f->term.history_cursor > 0)
+		// 	// 	f->term.history_cursor -= 1;
+		// 	// else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
+		// 	// 	f->term.history_cursor = 0;
+		// 	// else if (c == 0x41 && f->term.history_cursor < f->term.history_len)
+		// 	// 	f->term.history_cursor += 1;
+		// 	// if (!(line = print_history(line, f)))
+		// 	// {
+		// 	// 	i = 0;
+		// 	// 	continue ;
+		// 	// }
+		// 	// i = ft_strlen(line);
+
 		ft_termcmd("ce");
-		if (c == 0x09) //tab
+		if (c == KEY_TAB) //tab
 		{
-			if (!(ft_strlen(line)))
+			if (f->term.ln_len == 0)
 			{
 				put_cursor(' ');
+				ft_termcmd("bl");
 				continue ;
 			}
 			f->term.tab_flag = 1;
@@ -124,21 +139,17 @@ char		*get_lines(t_msh *f)
 			}
 			break ;
 		}
-		else if (c == 0x7f) //del
+		else if (c == KEY_DEL) //del
 		{
-			if (i == 0)
+			if (f->term.ln_len == 0)
 			{
 				put_cursor(' ');
 				continue ;
 			}
-			ft_termcmd("dm");
-			line[i - 1] = '\0';
-			printing_line(line, i);
-			ft_termcmd("rc");
-			i --;
+			ft_lstdeletenodeline(l, 2);
 			continue ;
 		}
-		else if (c == 0x1b) //esc
+		else if (c == KEY_ESC) //esc
 		{
 			if (f->term.tab_flag == 1)
 			{
@@ -146,17 +157,16 @@ char		*get_lines(t_msh *f)
 				f->term.tab_flag = 0;
 			}
 		}
-		if (c >= 32 && c <= 126)
-		{
-			line[i] = c;
-			line[i + 1] = '\0';
-		}
-		i++;
-		// ft_putnbr_fd(i, 2);
-		printing_line(line, i);
+			line = get_char(&l, f, c, line);
+
+		printing_line(line, f->term.ln_cursor);
+		c = 0;
 	}
+	ft_lstdeln(&l);
 	ft_putstr_fd(line, 2);
 	ft_putchar_fd('\n', 2);
+	f->term.ln_cursor = 0;
+	f->term.ln_len = 0;
 	return (line);
 }
 

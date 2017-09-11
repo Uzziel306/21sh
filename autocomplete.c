@@ -61,7 +61,7 @@ char		*auto_complete(char *line)
 	int				len;
 	struct winsize	win;
 
-	// ft_termcmd("ce");
+	ft_termcmd("bl");
 	f = get_t_msh(NULL);
 	i = 0;
 	pwd = getcwd(NULL, 0);

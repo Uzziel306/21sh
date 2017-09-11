@@ -13,11 +13,12 @@ SRC		=	main.c \
 			lists_functions.c \
 			exit.c \
 			readterm.c \
-			autocomplete.c
+			autocomplete.c \
+			t_line_functions.c
 
 OBJ		= $(SRC:.c=.o)
 
-CFLAGS	= -Wall -Wextra -Werror
+# CFLAGS	= -Wall -Wextra -Werror
 
 CC		= gcc
 
