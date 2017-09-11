@@ -140,7 +140,7 @@ char				*cutting_last_path(char *str);
 /*
 ** readterm functions used in the proyect.. readterm.c
 */
-void				starting_env(t_msh *f);
+void				starting_env(void);
 char				*get_lines(t_msh *f);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);

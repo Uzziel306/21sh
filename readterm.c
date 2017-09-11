@@ -1,20 +1,21 @@
 #include "21sh.h"
 
-void		starting_env(t_msh *f)
+void		starting_env(void)
 {
 	char	*env;
 	int		ret;
+	struct termios term;
 
 	if (!(env = getenv("TERM")))
 		ft_error("didn't find TERM enviroment");
 	if (!(ret = tgetent(NULL, env)))
 		ft_error("getting the TERM enviroment");
-	if (tcgetattr(0, &f->term.term) != 0)
+	if (tcgetattr(0, &term) != 0)
 		ft_error("didn't store the attributes of termios structure");
-	f->term.term.c_lflag &= ~(ICANON | ECHO);
-	f->term.term.c_cc[VMIN] = 1;
-	f->term.term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &f->term.term);
+	term.c_lflag &= ~(ICANON | ECHO);
+	term.c_cc[VMIN] = 1;
+	term.c_cc[VTIME] = 0;
+	tcsetattr(0, TCSADRAIN, &term);
 	// ft_termcmd("ti");
 	ft_termcmd("vi");
 }
@@ -68,23 +69,32 @@ char		*get_lines(t_msh *f)
 			i -= 2;
 			continue ;
 		}
-		else if (c == 0x41 || c == 0x42)
+		if (c == 0x50)
+			printf("rico\n" );
+		else if (c == 0x41 || c == 0x42) //up down
 		{
 			if (c == 0x41)
 				i -= 3;
 			else
 				i -= 2;
-			if (c == 0x42 && f->term.history_cursor == 0)
-			{
-				ft_termcmd("bl");
-				continue ;
-			}
-			else if (c == 0x42 && f->term.history_cursor > 0)
-				f->term.history_cursor -= 1;
-			else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
-				f->term.history_cursor = 0;
-			print_history(line, f);
-			i = ft_strlen(line);
+			// if (c == 0x42 && f->term.history_cursor == 0)
+			// {
+			// 	printf("lolas\n");
+			// 	ft_termcmd("bl");
+			// 	continue ;
+			// }
+			// else if (c == 0x42 && f->term.history_cursor > 0)
+			// 	f->term.history_cursor -= 1;
+			// else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
+			// 	f->term.history_cursor = 0;
+			// else if (c == 0x41 && f->term.history_cursor < f->term.history_len)
+			// 	f->term.history_cursor += 1;
+			// if (!(line = print_history(line, f)))
+			// {
+			// 	i = 0;
+			// 	continue ;
+			// }
+			// i = ft_strlen(line);
 		}
 		ft_termcmd("ce");
 		if (c == 0x09) //tab
@@ -177,17 +187,23 @@ char			*print_history(char *line, t_msh *f)
 
 
 	//arreglar el history, arrgla el loop de la link list del history
-	i = 0;
+	ft_strdel(&line);
+	if (f->term.history_len == 0)
+	{
+		ft_termcmd("bl");
+		return (NULL);
+	}
+	i = 1;
 	tmp = f->term.x;
 	while (tmp)
 	{
-		printf("%s\n", f->term.x->content);
+		// printf("%d\n", f->term.history_cursor);
 		if (i == f->term.history_cursor)
 		{
-			ft_strdel(&line);
 			f->term.history_cursor = 0;
+			printf("%s\n", f->term.x->content);
 			exit (0);
-			return (f->term.x->content);
+			// return (f->term.x->content);
 		}
 		i++;
 		tmp = tmp->next;
