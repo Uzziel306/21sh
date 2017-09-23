@@ -169,5 +169,5 @@ void				ft_lstaddbackline(t_line **alst, t_line *new);
 char				*ft_lst_to_str(t_line **line, t_msh *f);
 char				*get_char(t_line **l, t_msh *f, char c, char *line);
 void				ft_lstdeln(t_line **alst);
-void				ft_lstdeletenodeline(t_line *e, int nb);
+void				ft_lstdeletenodeline(t_line **e, int nb);
 #endif

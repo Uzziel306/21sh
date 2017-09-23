@@ -146,7 +146,11 @@ char		*get_lines(t_msh *f)
 				put_cursor(' ');
 				continue ;
 			}
-			ft_lstdeletenodeline(l, 2);
+			ft_lstdeletenodeline(&l, f->term.ln_cursor);
+			line = ft_lst_to_str(&l, f);
+			printing_line(line, f->term.ln_cursor);
+			f->term.ln_cursor -= 1;
+			f->term.ln_len -= 1;
 			continue ;
 		}
 		else if (c == KEY_ESC) //esc
@@ -157,9 +161,12 @@ char		*get_lines(t_msh *f)
 				f->term.tab_flag = 0;
 			}
 		}
-			line = get_char(&l, f, c, line);
-
+		line = get_char(&l, f, c, line);
+		ft_putnbr_fd(f->term.ln_cursor, 2);
+		ft_putnbr_fd(f->term.ln_len, 2);
+		ft_putchar_fd('\n', 2);
 		printing_line(line, f->term.ln_cursor);
+		ft_putchar_fd('\n', 2);
 		c = 0;
 	}
 	ft_lstdeln(&l);

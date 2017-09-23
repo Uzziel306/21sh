@@ -1,17 +1,16 @@
 #include "21sh.h"
 
-void		ft_lstdeletenodeline(t_line *e, int nb)
+void		ft_lstdeletenodeline(t_line **e, int nb)
 {
 	t_line	*tmp;
 	t_line	*tmp2;
 	int		i;
 
 	i = -1;
-	tmp = e;
+	tmp = *e;
 	if (nb == 1)
 	{
-		e = tmp->next;
-		ft_memdel((void**)tmp);
+		*e = tmp->next;
 		return ;
 	}
 	while (++i < nb - 2)
@@ -107,6 +106,14 @@ void		ft_lstaddnthline(t_line **e, t_line *new, int nb)
 	int		i;
 
 	i = -1;
+
+	if (nb == 0)
+		nb = 1;
+	else if (nb == 1)
+	{
+		ft_termcmd("bl");
+		nb = 2;
+	}
 	if (nb == 1)
 	{
 		new->next = *e;
