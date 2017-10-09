@@ -1,24 +1,30 @@
 #include "21sh.h"
 
-void		ft_lstdeletenodeline(t_line **e, int nb)
+void		ft_lstdeletenodeline(t_line **head_ref, int position)
 {
-	t_line	*tmp;
-	t_line	*tmp2;
-	int		i;
+	t_line *temp;
+	int i = 0;
+	t_line *next;
 
-	i = -1;
-	tmp = *e;
-	if (nb == 1)
+	temp = *head_ref;
+	if (*head_ref == NULL)
+		return;
+	if (position == 0)
 	{
-		*e = tmp->next;
-		return ;
+		*head_ref = temp->next;
+		free(temp);
+		return;
 	}
-	while (++i < nb - 2)
-		tmp = tmp->next;
-	tmp2 = tmp->next;
-	tmp->next = tmp2->next;
-	free(tmp2);
-	tmp2 = NULL;
+	while (temp != NULL && i < position - 1)
+	{
+		temp = temp->next;
+		i++;
+	}
+	if (temp == NULL || temp->next == NULL)
+		return;
+	next = temp->next->next;
+	free(temp->next);
+	temp->next = next;
 }
 
 void		ft_lstdeln(t_line **alst)

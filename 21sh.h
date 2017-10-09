@@ -53,6 +53,7 @@ typedef struct		s_term
 	int				win_x;
 	int				win_y;
 	int				tab_flag;
+	int				esc_flag;
 	t_list			*x;
 }					t_term;
 

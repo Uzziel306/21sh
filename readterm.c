@@ -65,16 +65,11 @@ char		*get_lines(t_msh *f)
 	put_cursor(' ');
 	while ((read(0, &c, sizeof(int))) != 0)
 	{
-		// ft_putchar_fd(c, 2);
-		// printf("%d\n", c);
-		// if (c >= 32 && c <= 126)
-		// 	flag = 0;
-		// else
-		// 	flag = 1;
 		ft_termcmd("rc");
-		if (c == KEY_LEFT || c == KEY_RIGHT) //arrows
+		if (c == KEY_LEFT || c == KEY_RIGHT || c == KEY_DOWN || c == KEY_UP) //arrows
 		{
-			if (c == KEY_LEFT && f->term.ln_len == 0)
+			if (  ((c == KEY_LEFT || c == KEY_RIGHT) && f->term.ln_len == 0)
+			 || ((c == KEY_DOWN || c == KEY_UP) && f->term.history_len == 0))
 			{
 				ft_termcmd("bl");
 				continue ;
@@ -84,32 +79,6 @@ char		*get_lines(t_msh *f)
 			else if (c == KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
 				f->term.ln_cursor += 1;
 		}
-		// if (c == 0x50)
-		// 	printf("rico\n" );
-		// if (c == 0x41 || c == 0x42) //up down
-		// {
-		// 	ft_putstr_fd("up/donw\n", 2);
-		// 	continue ;
-		// }
-		// 	// if (c == 0x42 && f->term.history_cursor == 0)
-		// 	// {
-		// 	// 	printf("lolas\n");
-		// 	// 	ft_termcmd("bl");
-		// 	// 	continue ;
-		// 	// }
-		// 	// else if (c == 0x42 && f->term.history_cursor > 0)
-		// 	// 	f->term.history_cursor -= 1;
-		// 	// else if (c == 0x41 && f->term.history_cursor == f->term.history_len)
-		// 	// 	f->term.history_cursor = 0;
-		// 	// else if (c == 0x41 && f->term.history_cursor < f->term.history_len)
-		// 	// 	f->term.history_cursor += 1;
-		// 	// if (!(line = print_history(line, f)))
-		// 	// {
-		// 	// 	i = 0;
-		// 	// 	continue ;
-		// 	// }
-		// 	// i = ft_strlen(line);
-
 		ft_termcmd("ce");
 		if (c == KEY_TAB) //tab
 		{
@@ -146,25 +115,51 @@ char		*get_lines(t_msh *f)
 				put_cursor(' ');
 				continue ;
 			}
-			ft_lstdeletenodeline(&l, f->term.ln_cursor);
-			line = ft_lst_to_str(&l, f);
-			printing_line(line, f->term.ln_cursor);
+			else if (f->term.esc_flag == 1)
+			{
+				ft_termcmd("ce");
+				f->term.esc_flag = 0;
+				ft_lstdeln(&l);
+				ft_strdel(&line);
+				f->term.ln_cursor = 0;
+				f->term.ln_len = 0;
+				put_cursor(' ');
+				continue ;
+			}
+			ft_strdel(&line);
+			ft_lstdeletenodeline(&l, f->term.ln_cursor - 1);
 			f->term.ln_cursor -= 1;
 			f->term.ln_len -= 1;
+			line = ft_lst_to_str(&l, f);
+			printing_line(line, f->term.ln_cursor);
 			continue ;
 		}
 		else if (c == KEY_ESC) //esc
 		{
-			if (f->term.tab_flag == 1)
+			if (f->term.ln_len == 0)
+			{
+				ft_termcmd("bl");
+				put_cursor(' ');
+				continue ;
+			}
+			else if (f->term.tab_flag == 1)
 			{
 				ft_termcmd("cd");
 				f->term.tab_flag = 0;
 			}
+			else
+			{
+				f->term.esc_flag = (f->term.esc_flag == 0) ? 1 : 0;
+				ft_termcmd("bl");
+				printing_line(line, f->term.ln_cursor);
+				continue ;
+				// put_cursor(' ');
+			}
 		}
 		line = get_char(&l, f, c, line);
-		ft_putnbr_fd(f->term.ln_cursor, 2);
-		ft_putnbr_fd(f->term.ln_len, 2);
-		ft_putchar_fd('\n', 2);
+		// ft_putnbr_fd(f->term.ln_cursor, 2);
+		// ft_putnbr_fd(f->term.ln_len, 2);
+		// ft_putchar_fd('\n', 2);
 		printing_line(line, f->term.ln_cursor);
 		ft_putchar_fd('\n', 2);
 		c = 0;
@@ -201,7 +196,6 @@ char			*print_history(char *line, t_msh *f)
 {
 	int			i;
 	t_list		*tmp;
-
 
 	//arreglar el history, arrgla el loop de la link list del history
 	ft_strdel(&line);
