@@ -3,9 +3,10 @@
 void		ft_lstdeletenodeline(t_line **head_ref, int position)
 {
 	t_line *temp;
-	int i = 0;
+	int i;
 	t_line *next;
 
+	i = 0;
 	temp = *head_ref;
 	if (*head_ref == NULL)
 		return;
@@ -53,16 +54,16 @@ char		*get_char(t_line **l, t_msh *f, char c, char *line)
 	{
 		if (line != NULL)
 			ft_strdel(&line);
-		f->term.ln_cursor += 1;
-		f->term.ln_len += 1;
 		tmp = (t_line*)ft_memalloc(sizeof(t_line));
 		tmp->content = c;
 		tmp->next = NULL;
 		if (f->term.ln_cursor == f->term.ln_len)
 			ft_lstaddbackline(l, tmp);
 		else
-			ft_lstaddnthline(l, tmp, f->term.ln_cursor - 1);
+			ft_lstaddnthline(l, tmp, f->term.ln_cursor + 1);
 		line = ft_lst_to_str(l, f);
+		f->term.ln_cursor += 1;
+		f->term.ln_len += 1;
 		return (line);
 	}
 	return (line);
@@ -111,15 +112,7 @@ void		ft_lstaddnthline(t_line **e, t_line *new, int nb)
 	t_line	*tmp;
 	int		i;
 
-	i = -1;
-
-	if (nb == 0)
-		nb = 1;
-	else if (nb == 1)
-	{
-		ft_termcmd("bl");
-		nb = 2;
-	}
+	i = 1;
 	if (nb == 1)
 	{
 		new->next = *e;
@@ -127,7 +120,7 @@ void		ft_lstaddnthline(t_line **e, t_line *new, int nb)
 		return ;
 	}
 	tmp = *e;
-	while (i < nb - 2)
+	while (i < nb - 1)
 	{
 		tmp = tmp->next;
 		i++;

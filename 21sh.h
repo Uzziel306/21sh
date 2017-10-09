@@ -155,6 +155,7 @@ void				starting_env(void);
 char				*get_lines(t_msh *f);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);
+void				printing_line(char *line, int cursor);
 /*
 ** auto_complete functions used in the proyect.. auto_complete.c
 */
@@ -171,4 +172,14 @@ char				*ft_lst_to_str(t_line **line, t_msh *f);
 char				*get_char(t_line **l, t_msh *f, char c, char *line);
 void				ft_lstdeln(t_line **alst);
 void				ft_lstdeletenodeline(t_line **e, int nb);
+/*
+** keycaps functions used in the proyect.. keycaps.c
+*/
+void				arrows(int c, t_msh *f);
+void				tabs(t_msh *f, char **line);
+void				esc(t_msh *f, char **line);
+char				*enter(t_msh *f, char **line);
+void				del(t_msh *f, char **line, t_line	**l);
+void				history(char *line, t_msh *f);
+char				*print_history(char *line, t_msh *f);
 #endif
