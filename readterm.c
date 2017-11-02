@@ -68,7 +68,8 @@ char		*get_lines(t_msh *f)
 		ft_termcmd("rc");
 		if (c == KEY_LEFT || c == KEY_RIGHT || c == KEY_DOWN || c == KEY_UP) //arrows
 			arrows(c, f);
-		ft_termcmd("ce");
+		// ft_termcmd("fs");
+		// ft_termcmd("nw");
 		if (c == KEY_TAB) //tab
 		{
 			tabs(f, &line);
@@ -76,6 +77,12 @@ char		*get_lines(t_msh *f)
 		}
 		else if (c == '\n') //enter
 		{
+
+			if (f->term.ln_len == 0)
+			{
+				put_cursor(' ');
+				continue ;
+			}
 			line = enter(f, &line);
 			break ;
 		}

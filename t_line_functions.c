@@ -52,6 +52,7 @@ char		*get_char(t_line **l, t_msh *f, char c, char *line)
 
 	if (c >= 32 && c <= 126)
 	{
+		// ft_putchar_fd('K', 2);
 		if (line != NULL)
 			ft_strdel(&line);
 		tmp = (t_line*)ft_memalloc(sizeof(t_line));
@@ -61,9 +62,9 @@ char		*get_char(t_line **l, t_msh *f, char c, char *line)
 			ft_lstaddbackline(l, tmp);
 		else
 			ft_lstaddnthline(l, tmp, f->term.ln_cursor + 1);
-		line = ft_lst_to_str(l, f);
 		f->term.ln_cursor += 1;
 		f->term.ln_len += 1;
+		line = ft_lst_to_str(l, f);
 		return (line);
 	}
 	return (line);
