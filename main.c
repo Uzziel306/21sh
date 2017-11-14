@@ -97,15 +97,13 @@ void				pre_get_command(char *str, t_msh *f, t_list *e)
 		get_command(str, f, e);
 }
 
-int					main(int ac, char **ag)
+int					main(void)
 {
 	char			*command;
 	t_msh			f;
 	t_list			*e;
 	char 			*pwd;
 
-	ac += 1;
-	ag += 1;
 	ft_bzero(&f, sizeof(t_msh));
 	get_shell(&f);
 	e = get_env(&f);
@@ -116,8 +114,9 @@ int					main(int ac, char **ag)
 		ft_printfcolor("%s%s%s", "@", 33, f.sh.p_user, 33, "$>", 33);
 		ft_printfcolor("%s%s%s", "*[", 34, pwd, 31, "]* ", 34);
 		command = readterm(&f);
-		if (ft_strcmp(command, "exit") == 0)
-			break ;
+		if (command)
+			if (ft_strcmp(command, "exit") == 0)
+				break ;
 		if (ft_strlen(command))
 			pre_get_command(command, &f, e);
 		ft_strdel(&command);

@@ -10,6 +10,7 @@ SRC		=	main.c \
 			cd_command_2.c \
 			get_env.c \
 			helper_2.c \
+			helper_3.c \
 			lists_functions.c \
 			exit.c \
 			readterm.c \

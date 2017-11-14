@@ -54,6 +54,7 @@ typedef struct		s_term
 	int				win_y;
 	int				tab_flag;
 	int				esc_flag;
+	int				enter;
 	t_list			*x;
 }					t_term;
 
@@ -118,7 +119,7 @@ int					validation_name(char *str);
 void				unsetenv_validation(t_list *e, char **name);
 int					unset_env(t_list *e, char *name, int i);
 /*
-** helper functions used in the proyect.. helper.c helper_2.c
+** helper functions used in the proyect.. helper.c helper_2.c helper_3.c
 */
 int					ft_error_path(char *pwd);
 char				*get_last_part();
@@ -127,6 +128,8 @@ void				free_shit(char *a, char *b, char *c);
 int					ft_memdel_int(void **ap);
 int					ft_ismayus(int c);
 t_msh				*get_t_msh(t_msh *f);
+int					ft_is_printable(char c);
+void				ft_key(int c, t_msh *f, t_line	*l, char **line);
 /*
 ** main functions used in the proyect.. main.c
 */
@@ -152,7 +155,7 @@ char				*cutting_last_path(char *str);
 ** readterm functions used in the proyect.. readterm.c
 */
 void				starting_env(void);
-char				*get_lines(t_msh *f);
+char				*get_lines(t_msh *f, t_line *l);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);
 void				printing_line(char *line, int cursor);
@@ -162,7 +165,6 @@ void				printing_line(char *line, int cursor);
 int					len_dir(char *pwd, t_msh *f);
 char				*auto_complete(char *line);
 char				*get_autocomplete(char *line, t_msh *f);
-char				*print_history(char *line, t_msh *f);
 /*
 ** lst_line_functions functions used in the proyect.. t_line_functions.c
 */
@@ -175,11 +177,11 @@ void				ft_lstdeletenodeline(t_line **e, int nb);
 /*
 ** keycaps functions used in the proyect.. keycaps.c
 */
-void				arrows(int c, t_msh *f);
+void				arrows(int c, t_msh *f, char **line);
 void				tabs(t_msh *f, char **line);
 void				esc(t_msh *f, char **line);
 char				*enter(t_msh *f, char **line);
 void				del(t_msh *f, char **line, t_line	**l);
 void				history(char *line, t_msh *f);
-char				*print_history(char *line, t_msh *f);
+void				print_history(char **line, t_msh *f);
 #endif

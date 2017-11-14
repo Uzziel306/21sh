@@ -51,61 +51,31 @@ void		printing_line(char *line, int cursor)
 	}
 	if (flag == 0)
 		put_cursor(' ');
+	ft_putchar_fd('\n', 2);
 }
 
-char		*get_lines(t_msh *f)
+char		*get_lines(t_msh *f, t_line	*l)
 {
 	int		c;
 	char	*line;
-	t_line	*l;
 
-	l = NULL;
 	line = NULL;
 	ft_termcmd("sc");
 	put_cursor(' ');
-	while ((read(0, &c, sizeof(int))) != 0)
+	while (read(0, &c, sizeof(int)) && f->term.enter != 1)
 	{
 		ft_termcmd("rc");
-		if (c == KEY_LEFT || c == KEY_RIGHT || c == KEY_DOWN || c == KEY_UP) //arrows
-			arrows(c, f);
-		// ft_termcmd("fs");
-		// ft_termcmd("nw");
-		if (c == KEY_TAB) //tab
-		{
-			tabs(f, &line);
-			continue ;
-		}
-		else if (c == '\n') //enter
-		{
-
-			if (f->term.ln_len == 0)
-			{
-				put_cursor(' ');
-				continue ;
-			}
-			line = enter(f, &line);
-			break ;
-		}
-		else if (c == KEY_DEL) //del
-		{
-			del(f, &line, &l);
-			continue ;
-		}
-		else if (c == KEY_ESC) //esc
-		{
-			esc(f, &line);
-			continue ;
-		}
-		line = get_char(&l, f, c, line);
-		printing_line(line, f->term.ln_cursor);
-		ft_putchar_fd('\n', 2);
+		ft_termcmd("cd");
+		if (ft_is_printable(c))
+			line = get_char(&l, f, c, line);
+		else
+			ft_key(c, f, l, &line);
 		c = 0;
+		if (f->term.enter == 1)
+			break ;
+		printing_line(line, f->term.ln_cursor);
 	}
 	ft_lstdeln(&l);
-	ft_putstr_fd(line, 2);
-	ft_putchar_fd('\n', 2);
-	f->term.ln_cursor = 0;
-	f->term.ln_len = 0;
 	return (line);
 }
 
@@ -113,8 +83,17 @@ char		*get_lines(t_msh *f)
 char			*readterm(t_msh *f)
 {
 	char		*line;
+	t_line	*l;
 
-	line = get_lines(f);
+	l = NULL;
+	line = get_lines(f, l);
+	ft_putstr_fd(line, 2);
+	ft_putchar_fd('\n', 2);
+	f->term.enter = 0;
+	f->term.ln_cursor = 0;
+	f->term.ln_len = 0;
 	history(line, f);
+	
+	// exit (0);
 	return (line);
 }

@@ -1,6 +1,6 @@
 #include "21sh.h"
 
-void		arrows(int c, t_msh *f)
+void		arrows(int c, t_msh *f, char **line)
 {
 	if (((c == KEY_LEFT || c == KEY_RIGHT) && f->term.ln_len == 0)
 || ((c == KEY_DOWN || c == KEY_UP) && f->term.history_len == 0))
@@ -12,6 +12,8 @@ void		arrows(int c, t_msh *f)
 		f->term.ln_cursor -= 1;
 	else if (c == KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
 		f->term.ln_cursor += 1;
+	else if (c == KEY_UP)
+		print_history(line, f);
 }
 
 void		tabs(t_msh *f, char **line)
@@ -43,6 +45,7 @@ void		esc(t_msh *f, char **line)
 	{
 		ft_termcmd("cd");
 		f->term.tab_flag = 0;
+		printing_line(*line, f->term.ln_cursor);
 	}
 	else
 	{
