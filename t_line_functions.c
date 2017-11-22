@@ -49,10 +49,8 @@ void		ft_lstdeln(t_line **alst)
 char		*get_char(t_line **l, t_msh *f, char c, char *line)
 {
 	t_line	*tmp;
-
 	if (c >= 32 && c <= 126)
 	{
-		// ft_putchar_fd('K', 2);
 		if (line != NULL)
 			ft_strdel(&line);
 		tmp = (t_line*)ft_memalloc(sizeof(t_line));

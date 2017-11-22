@@ -22,27 +22,40 @@ void			history(char *line, t_msh *f)
 	ft_lstaddback(&f->term.x, tmp);
 }
 
-void			print_history(char **line, t_msh *f)
+char			*get_history(char *line, t_msh *f)
 {
-	int			i;
+	f->term.ln_len = ft_strlen(line);
+	f->term.ln_cursor = f->term.ln_len;
+	f->term.history_flag = 1;
+	return (ft_strdup(line));
+}
+
+
+void			print_history(char **line, t_msh *f, int o, int i)
+{
 	t_list		*tmp;
 
-	//arreglar el history, arrgla el loop de la link list del history
-	ft_termcmd("bl");
 	ft_strdel(line);
 	if (f->term.history_len == 0)
 	{
 		ft_termcmd("bl");
 		return ;
 	}
-	i = 0;
 	tmp = f->term.x;
-	f->term.history_cursor += 1;
+	if (o == 1)
+		f->term.history_cursor += 1;
+	else
+		f->term.history_cursor -= 1; 
+	if (f->term.history_cursor > f->term.history_len || f->term.history_cursor < 0)
+	{
+		put_cursor(' ');
+		f->term.history_cursor = 0;
+		return ;
+	}
 	while (tmp)
 	{
-		// printf("%d\n", f->term.history_cursor);
 		if (i == f->term.history_cursor)
-			*line = ft_strdup(f->term.x->content);
+			*line = get_history(tmp->content, f);
 		i++;
 		tmp = tmp->next;
 	}

@@ -54,7 +54,7 @@ void		printing_line(char *line, int cursor)
 	ft_putchar_fd('\n', 2);
 }
 
-char		*get_lines(t_msh *f, t_line	*l)
+char		*get_lines(t_msh *f, t_line	**l)
 {
 	int		c;
 	char	*line;
@@ -67,7 +67,7 @@ char		*get_lines(t_msh *f, t_line	*l)
 		ft_termcmd("rc");
 		ft_termcmd("cd");
 		if (ft_is_printable(c))
-			line = get_char(&l, f, c, line);
+			line = get_char(l, f, c, line);
 		else
 			ft_key(c, f, l, &line);
 		c = 0;
@@ -75,7 +75,7 @@ char		*get_lines(t_msh *f, t_line	*l)
 			break ;
 		printing_line(line, f->term.ln_cursor);
 	}
-	ft_lstdeln(&l);
+	ft_lstdeln(l);
 	return (line);
 }
 
@@ -83,17 +83,14 @@ char		*get_lines(t_msh *f, t_line	*l)
 char			*readterm(t_msh *f)
 {
 	char		*line;
-	t_line	*l;
 
-	l = NULL;
-	line = get_lines(f, l);
+	f->line = NULL;
+	line = get_lines(f, &f->line);
 	ft_putstr_fd(line, 2);
 	ft_putchar_fd('\n', 2);
 	f->term.enter = 0;
 	f->term.ln_cursor = 0;
 	f->term.ln_len = 0;
 	history(line, f);
-	
-	// exit (0);
 	return (line);
 }

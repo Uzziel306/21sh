@@ -47,6 +47,7 @@ typedef struct		s_term
 	int				tab_cursor;
 	int				history_cursor;
 	int				history_len;
+	int				history_flag;
 	int				ln_cursor;
 	int				ln_len;
 	int				max;
@@ -80,6 +81,7 @@ typedef struct		s_msh
 	t_shll			sh;
 	t_axe			axe;
 	t_term			term;
+	t_line			*line;
 }					t_msh;
 
 /*
@@ -129,7 +131,9 @@ int					ft_memdel_int(void **ap);
 int					ft_ismayus(int c);
 t_msh				*get_t_msh(t_msh *f);
 int					ft_is_printable(char c);
-void				ft_key(int c, t_msh *f, t_line	*l, char **line);
+void				ft_key(int c, t_msh *f, t_line	**l, char **line);
+void				ft_str_to_lst(t_msh *f, char **line);
+void				printlst(t_line **l);
 /*
 ** main functions used in the proyect.. main.c
 */
@@ -155,7 +159,7 @@ char				*cutting_last_path(char *str);
 ** readterm functions used in the proyect.. readterm.c
 */
 void				starting_env(void);
-char				*get_lines(t_msh *f, t_line *l);
+char				*get_lines(t_msh *f, t_line **l);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);
 void				printing_line(char *line, int cursor);
@@ -183,5 +187,6 @@ void				esc(t_msh *f, char **line);
 char				*enter(t_msh *f, char **line);
 void				del(t_msh *f, char **line, t_line	**l);
 void				history(char *line, t_msh *f);
-void				print_history(char **line, t_msh *f);
+void				print_history(char **line, t_msh *f, int o, int i);
+char				*get_history(char *line, t_msh *f);
 #endif

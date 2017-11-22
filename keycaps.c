@@ -13,7 +13,16 @@ void		arrows(int c, t_msh *f, char **line)
 	else if (c == KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
 		f->term.ln_cursor += 1;
 	else if (c == KEY_UP)
-		print_history(line, f);
+	{
+		print_history(line, f, 1, 1);
+		ft_str_to_lst(f, line);
+	}
+	else if (c == KEY_DOWN)
+	{
+		print_history(line, f, 0, 1);
+		ft_str_to_lst(f, line);
+	}
+
 }
 
 void		tabs(t_msh *f, char **line)
@@ -87,6 +96,6 @@ void		del(t_msh *f, char **line, t_line	**l)
 		f->term.ln_cursor -= 1;
 		f->term.ln_len -= 1;
 		*line = ft_lst_to_str(l, f);
-		printing_line(*line, f->term.ln_cursor);
+		// printing_line(*line, f->term.ln_cursor);
 	}
 }
