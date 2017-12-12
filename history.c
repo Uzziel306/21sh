@@ -32,15 +32,15 @@ void			history(char *line, t_msh *f)
 	tmp2 = f->term.x;
 	if (!line)
 		return ;
-	if (tmp2 != NULL)
-	{
-		while (tmp2)
-		{
-			if ((ft_strcmp(line, tmp2->content) == 0))
-				return ;
-			tmp2 = tmp2->next;
-		}
-	}
+	// if (tmp2 != NULL)
+	// {
+	// 	while (tmp2)
+	// 	{
+	// 		if ((ft_strcmp(line, tmp2->content) == 0))
+	// 			return ;
+	// 		tmp2 = tmp2->next;
+	// 	}
+	// }
 	f->term.history_len += 1;
 	tmp = ft_lstnew(line, ft_strlen(line) + 1);
 	ft_lstaddnth(&f->term.x, tmp, 1);

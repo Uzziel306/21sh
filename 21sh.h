@@ -193,4 +193,10 @@ void				history(char *line, t_msh *f);
 void				print_history(char **line, t_msh *f, int o, int i);
 char				*get_history(char *line, t_msh *f);
 t_list				*ft_returnnode(t_list **head_ref, int position);
+/*
+** fn_arrows functions used in the proyect.. fn_arrows.c
+*/
+void				fn_arrows(t_msh *f, char **line, int c);
+void				fn_left(t_msh *f, char *line);
+void				fn_right(t_msh *f, char *line);
 #endif

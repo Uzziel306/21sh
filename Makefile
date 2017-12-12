@@ -17,6 +17,7 @@ SRC		=	main.c \
 			autocomplete.c \
 			t_line_functions.c \
 			history.c \
+			fn_arrows.c\
 			keycaps.c
 
 OBJ		= $(SRC:.c=.o)

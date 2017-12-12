@@ -61,6 +61,8 @@ void		ft_key(int c, t_msh *f, t_line	**l, char **line)
 		arrows(c, f, line);
 	else if (c == KEY_TAB)
 		tabs(f, line);
+	else if (c == KEY_FN_LEFT || c == KEY_FN_RIGHT)
+		fn_arrows(f, line, c);
 	else if (c == '\n')
 	{
 		if (f->term.ln_len == 0)
