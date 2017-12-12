@@ -1,5 +1,29 @@
 #include "21sh.h"
 
+t_list			*ft_returnnode(t_list **head_ref, int position)
+{
+	t_list *temp;
+	int i;
+	t_list *next;
+	t_list *tmp;
+
+	i = 0;
+	temp = *head_ref;
+	if (*head_ref == NULL)
+		return NULL;
+	while (temp != NULL && i < position - 1)
+	{
+		temp = temp->next;
+		i++;
+	}
+	if (temp == NULL || temp->next == NULL)
+		return NULL;
+	tmp = temp->next;
+	next = temp->next->next;
+	temp->next = next;
+	return tmp;
+}
+
 void			history(char *line, t_msh *f)
 {
 	t_list		*tmp;
@@ -24,12 +48,16 @@ void			history(char *line, t_msh *f)
 
 char			*get_history(char *line, t_msh *f)
 {
+	t_list		*data;
+	char		*ln;
+
+	ft_termcmd("bl");
+	ln = ft_strdup(line);
 	f->term.ln_len = ft_strlen(line);
 	f->term.ln_cursor = f->term.ln_len;
 	f->term.history_flag = 1;
-	return (ft_strdup(line));
+	return (ln);
 }
-
 
 void			print_history(char **line, t_msh *f, int o, int i)
 {
@@ -37,10 +65,7 @@ void			print_history(char **line, t_msh *f, int o, int i)
 
 	ft_strdel(line);
 	if (f->term.history_len == 0)
-	{
-		ft_termcmd("bl");
 		return ;
-	}
 	tmp = f->term.x;
 	if (o == 1)
 		f->term.history_cursor += 1;
@@ -49,7 +74,9 @@ void			print_history(char **line, t_msh *f, int o, int i)
 	if (f->term.history_cursor > f->term.history_len || f->term.history_cursor < 0)
 	{
 		put_cursor(' ');
+		ft_lstdeln(&f->line);
 		f->term.history_cursor = 0;
+		f->term.history_flag = 1;
 		return ;
 	}
 	while (tmp)

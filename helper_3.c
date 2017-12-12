@@ -39,6 +39,22 @@ void		ft_str_to_lst(t_msh *f, char **line)
 	ft_memdel((void**)&lolas);
 }
 
+void		history_enter(t_msh *f)
+{
+	t_list	*data;
+	t_list	*new;
+
+	if (f->term.history_cursor > 1)
+	{
+		f->term.history_flag = 0;
+		data = ft_returnnode(&f->term.x, f->term.history_cursor - 1);
+		new = ft_lstnew(data->content, ft_strlen(data->content) + 1);
+		ft_memdel((void**)&data->content);
+		ft_memdel((void**)&data);
+		ft_lstaddnth(&f->term.x, new, 1);
+	}
+}
+
 void		ft_key(int c, t_msh *f, t_line	**l, char **line)
 {
 	if (c == KEY_LEFT || c == KEY_RIGHT || c == KEY_DOWN || c == KEY_UP) //arrows
@@ -52,6 +68,8 @@ void		ft_key(int c, t_msh *f, t_line	**l, char **line)
 		if (f->term.tab_flag == 1)
 			*line = enter(f, line);
 		f->term.enter = 1;
+		if (f->term.history_flag == 1)
+			history_enter(f);
 		f->term.history_cursor = 0;
 	}
 	else if (c == KEY_DEL)

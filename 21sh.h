@@ -40,6 +40,8 @@
 # define KEY_TAB		9
 # define KEY_DEL		127
 # define KEY_ESC		27
+# define KEY_FN_LEFT	4741915
+# define KEY_FN_RIGHT	4610843
 
 typedef struct		s_term
 {
@@ -88,7 +90,7 @@ typedef struct		s_msh
 ** lists functions used in the proyect.. lists_functions.c
 */
 void				ft_lstsearch(t_list *e, char *name);
-void				ft_lstaddnth(t_list *e, t_list	*new, int nb);
+void				ft_lstaddnth(t_list **e, t_list	*new, int nb);
 void				ft_lstedit(t_list *e, char *name, char *value);
 void				ft_lstdeletenode(t_list *e, int nb);
 char				**ft_lst_to_mtx(t_list *e);
@@ -134,6 +136,7 @@ int					ft_is_printable(char c);
 void				ft_key(int c, t_msh *f, t_line	**l, char **line);
 void				ft_str_to_lst(t_msh *f, char **line);
 void				printlst(t_line **l);
+void				history_enter(t_msh *f);
 /*
 ** main functions used in the proyect.. main.c
 */
@@ -189,4 +192,5 @@ void				del(t_msh *f, char **line, t_line	**l);
 void				history(char *line, t_msh *f);
 void				print_history(char **line, t_msh *f, int o, int i);
 char				*get_history(char *line, t_msh *f);
+t_list				*ft_returnnode(t_list **head_ref, int position);
 #endif

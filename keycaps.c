@@ -15,14 +15,15 @@ void		arrows(int c, t_msh *f, char **line)
 	else if (c == KEY_UP)
 	{
 		print_history(line, f, 1, 1);
-		ft_str_to_lst(f, line);
+		if (f->term.history_cursor > 0)
+			ft_str_to_lst(f, line);
 	}
 	else if (c == KEY_DOWN)
 	{
 		print_history(line, f, 0, 1);
-		ft_str_to_lst(f, line);
+		if (f->term.history_cursor > 0)
+			ft_str_to_lst(f, line);
 	}
-
 }
 
 void		tabs(t_msh *f, char **line)
@@ -66,6 +67,9 @@ void		esc(t_msh *f, char **line)
 
 char		*enter(t_msh *f, char **line)
 {
+	t_list	*data;
+
+	ft_termcmd("bl");
 	ft_termcmd("cd");
 	if (f->term.tab_flag == 1)
 	{

@@ -65,20 +65,20 @@ char		**ft_lst_to_mtx(t_list *e)
 	return (mtx);
 }
 
-void		ft_lstaddnth(t_list *e, t_list *new, int nb)
+void		ft_lstaddnth(t_list **e, t_list *new, int nb)
 {
 	t_list	*tmp;
 	int		i;
 
-	i = -1;
+	i = 1;
 	if (nb == 1)
 	{
-		new->next = e;
-		e = new;
+		new->next = *e;
+		*e = new;
 		return ;
 	}
-	tmp = e;
-	while (i < nb - 2)
+	tmp = *e;
+	while (i < nb - 1)
 	{
 		tmp = tmp->next;
 		i++;
@@ -98,7 +98,7 @@ void		ft_lstedit(t_list *e, char *name, char *value)
 	tmp = ft_strjoin(name, "=");
 	tmp2 = ft_strjoin(tmp, value);
 	lst_tmp = ft_lstnew(tmp2, ft_strlen(tmp2) + 1);
-	ft_lstaddnth(e, lst_tmp, i);
+	ft_lstaddnth(&e, lst_tmp, i);
 	ft_memdel((void**)&tmp);
 	ft_memdel((void**)&tmp2);
 
