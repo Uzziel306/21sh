@@ -43,7 +43,7 @@ void			history(char *line, t_msh *f)
 	}
 	f->term.history_len += 1;
 	tmp = ft_lstnew(line, ft_strlen(line) + 1);
-	ft_lstaddback(&f->term.x, tmp);
+	ft_lstaddnth(&f->term.x, tmp, 1);
 }
 
 char			*get_history(char *line, t_msh *f)
@@ -64,14 +64,12 @@ void			print_history(char **line, t_msh *f, int o, int i)
 	t_list		*tmp;
 
 	ft_strdel(line);
-	if (f->term.history_len == 0)
-		return ;
 	tmp = f->term.x;
 	if (o == 1)
 		f->term.history_cursor += 1;
 	else
 		f->term.history_cursor -= 1; 
-	if (f->term.history_cursor > f->term.history_len || f->term.history_cursor < 0)
+	if (f->term.history_cursor > f->term.history_len || f->term.history_cursor <= 0)
 	{
 		put_cursor(' ');
 		ft_lstdeln(&f->line);
