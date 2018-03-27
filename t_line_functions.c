@@ -1,5 +1,20 @@
 #include "21sh.h"
 
+int			ft_lstlen(t_line *lst)
+{
+	t_line	*tmp;
+	int		i;
+
+	i = 0;
+	tmp = lst;
+	while (lst)
+	{
+		i++;
+		lst = lst->next;
+	}
+	return (i);
+}
+
 void		ft_lstdeletenodeline(t_line **head_ref, int position)
 {
 	t_line *temp;
@@ -46,29 +61,22 @@ void		ft_lstdeln(t_line **alst)
 	*alst = NULL;
 }
 
-char		*get_char(t_line **l, t_msh *f, char c, char *line)
+void		get_char(t_msh *f, char c)
 {
 	t_line	*tmp;
-	if (c >= 32 && c <= 126)
-	{
-		if (line != NULL)
-			ft_strdel(&line);
-		tmp = (t_line*)ft_memalloc(sizeof(t_line));
-		tmp->content = c;
-		tmp->next = NULL;
-		if (f->term.ln_cursor == f->term.ln_len)
-			ft_lstaddbackline(l, tmp);
-		else
-			ft_lstaddnthline(l, tmp, f->term.ln_cursor + 1);
-		f->term.ln_cursor += 1;
-		f->term.ln_len += 1;
-		line = ft_lst_to_str(l, f);
-		return (line);
-	}
-	return (line);
+
+	tmp = (t_line*)ft_memalloc(sizeof(t_line));
+	tmp->content = c;
+	tmp->next = NULL;
+	if (f->term.ln_cursor == f->term.ln_len)
+		ft_lstaddbackline(&f->line, tmp);
+	else
+		ft_lstaddnthline(&f->line, tmp, f->term.ln_cursor + 1);
+	f->term.ln_cursor += 1;
+	f->term.ln_len += 1;
 }
 
-char		*ft_lst_to_str(t_line **line, t_msh *f)
+char		*ft_lst_to_str(t_msh *f)
 {
 	int		i;
 	t_line	*tmp;
@@ -76,7 +84,7 @@ char		*ft_lst_to_str(t_line **line, t_msh *f)
 
 	ln = (char*)ft_memalloc(sizeof(char) * f->term.ln_len + 1);
 	i = 0;
-	tmp = *line;
+	tmp = f->line;
 	while(tmp)
 	{
 		ln[i] = tmp->content;
@@ -84,8 +92,6 @@ char		*ft_lst_to_str(t_line **line, t_msh *f)
 		i++;
 	}
 	ln[i] = '\0';
-	// ft_putstr_fd(ln, 2);
-	// exit(0);
 	return (ln);
 }
 

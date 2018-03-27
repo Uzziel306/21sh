@@ -27,6 +27,7 @@ t_list			*get_env(void)
 		ft_lstaddback(&en, tmp);
 		i++;
 	}
+	starting_env();
 	return (en);
 }
 

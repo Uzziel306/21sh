@@ -32,47 +32,30 @@ void			history(char *line, t_msh *f)
 	tmp2 = f->term.x;
 	if (!line)
 		return ;
-	// if (tmp2 != NULL)
-	// {
-	// 	while (tmp2)
-	// 	{
-	// 		if ((ft_strcmp(line, tmp2->content) == 0))
-	// 			return ;
-	// 		tmp2 = tmp2->next;
-	// 	}
-	// }
 	f->term.history_len += 1;
 	tmp = ft_lstnew(line, ft_strlen(line) + 1);
 	ft_lstaddnth(&f->term.x, tmp, 1);
 }
 
-char			*get_history(char *line, t_msh *f)
+void			get_history(char *line, t_msh *f)
 {
-	t_list		*data;
-	char		*ln;
-
-	ft_termcmd("bl");
-	ln = ft_strdup(line);
 	f->term.ln_len = ft_strlen(line);
 	f->term.ln_cursor = f->term.ln_len;
+	ft_str_to_lst(f, line);
 	f->term.history_flag = 1;
-	return (ln);
 }
 
-void			print_history(char **line, t_msh *f, int o, int i)
+void			print_history(t_msh *f, int UpDown)
 {
 	t_list		*tmp;
+	int			i;
 
-	ft_strdel(line);
+	i = 0;
 	tmp = f->term.x;
-	if (o == 1)
-		f->term.history_cursor += 1;
-	else
-		f->term.history_cursor -= 1; 
+	f->term.history_cursor = 
+	(UpDown == 1) ? f->term.history_cursor + 1 : f->term.history_cursor - 1;
 	if (f->term.history_cursor > f->term.history_len || f->term.history_cursor <= 0)
 	{
-		put_cursor(' ');
-		ft_lstdeln(&f->line);
 		f->term.history_cursor = 0;
 		f->term.history_flag = 1;
 		return ;
@@ -80,7 +63,10 @@ void			print_history(char **line, t_msh *f, int o, int i)
 	while (tmp)
 	{
 		if (i == f->term.history_cursor)
-			*line = get_history(tmp->content, f);
+		{
+			get_history(tmp->content, f);
+			break ;
+		}
 		i++;
 		tmp = tmp->next;
 	}

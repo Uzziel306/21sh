@@ -1,105 +1,96 @@
 #include "21sh.h"
 
-void		arrows(int c, t_msh *f, char **line)
+void		arrows(char *buf, t_msh *f)
 {
-	if (((c == KEY_LEFT || c == KEY_RIGHT) && f->term.ln_len == 0)
-|| ((c == KEY_DOWN || c == KEY_UP) && f->term.history_len == 0))
+		// if(KEY_LEFT)
+		// 	exit(0);
+	if (KEY_LEFT && f->term.ln_cursor > 0)
+		{
+			f->term.ln_cursor -= 1;
+			// exit(0);
+		}
+	else if (KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
+		{f->term.ln_cursor += 1;}
+	else if (KEY_UP || KEY_DOWN)
 	{
-		ft_termcmd("bl");
-		put_cursor(' ');
-	}
-	else if (c == KEY_LEFT && f->term.ln_cursor > 0)
-		f->term.ln_cursor -= 1;
-	else if (c == KEY_RIGHT && f->term.ln_cursor < f->term.ln_len)
-		f->term.ln_cursor += 1;
-	else if (c == KEY_UP)
-	{
-		print_history(line, f, 1, 1);
-		if (f->term.history_cursor > 0)
-			ft_str_to_lst(f, line);
-	}
-	else if (c == KEY_DOWN)
-	{
-		print_history(line, f, 0, 1);
-		if (f->term.history_cursor > 0)
-			ft_str_to_lst(f, line);
+		if (f->term.history_len > 0)
+			(KEY_UP) ? print_history(f, 1) : print_history(f, 0);
+		else
+			ft_termcmd("bl");
 	}
 }
 
-void		tabs(t_msh *f, char **line)
+void		tabs(t_msh *f)
 {
+	char *line;
+
 	if (f->term.ln_len == 0)
-		{
-			put_cursor(' ');
-			ft_termcmd("bl");
-		}
+		ft_termcmd("bl");
 	else
 	{
+		line = ft_lst_to_str(f);
 		f->term.tab_flag = 1;
 		ft_termcmd("sc");
 		ft_termcmd("ce");
-		ft_putstr_fd(*line, 2);
-		// ft_termcmd("sc");
-		auto_complete(*line);
+		ft_putstr_fd(line, 2);
+		ft_putchar_fd('\n', 2);
+		auto_complete(f);
+		ft_strdel(&line);
 	}
 }
 
-void		esc(t_msh *f, char **line)
+void		esc(t_msh *f)
 {
 	if (f->term.ln_len == 0)
 	{
 		ft_termcmd("bl");
-		put_cursor(' ');
+		// put_cursor(' ');
 	}
 	else if (f->term.tab_flag == 1)
 	{
 		ft_termcmd("cd");
 		f->term.tab_flag = 0;
-		printing_line(*line, f->term.ln_cursor);
+		//printing_line(*line, f->term.ln_cursor);
 	}
 	else
 	{
 		f->term.esc_flag = (f->term.esc_flag == 0) ? 1 : 0;
 		ft_termcmd("bl");
-		printing_line(*line, f->term.ln_cursor);
+		//printing_line(*line, f->term.ln_cursor);
 	}
 }
 
-char		*enter(t_msh *f, char **line)
+void		enter(t_msh *f)
 {
-	t_list	*data;
-
 	ft_termcmd("bl");
 	ft_termcmd("cd");
 	if (f->term.tab_flag == 1)
 	{
 		f->term.tab_flag = 0;
-		*line = get_autocomplete(*line, f);
+		get_autocomplete(f);
 	}
-	return (*line);
 }
 
-void		del(t_msh *f, char **line, t_line	**l)
+void		del(t_msh *f)
 {
-	if (f->term.ln_len == 0)
-		put_cursor(' ');
-	else if (f->term.esc_flag == 1)
+	if (f->term.esc_flag == 1)
 	{
 		ft_termcmd("ce");
 		f->term.esc_flag = 0;
-		ft_lstdeln(l);
-		ft_strdel(line);
+		ft_lstdeln(&f->line);
 		f->term.ln_cursor = 0;
 		f->term.ln_len = 0;
 		put_cursor(' ');
 	}
 	else
 	{
-		ft_strdel(line);
-		ft_lstdeletenodeline(l, f->term.ln_cursor - 1);
-		f->term.ln_cursor -= 1;
-		f->term.ln_len -= 1;
-		*line = ft_lst_to_str(l, f);
-		// printing_line(*line, f->term.ln_cursor);
+		if (f->term.ln_len > 0)
+		{
+			ft_lstdeletenodeline(&f->line, f->term.ln_cursor - 1);
+			f->term.ln_cursor -= 1;
+			f->term.ln_len -= 1;
+		}
+		else
+			ft_termcmd("bl");
 	}
 }

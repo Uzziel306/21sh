@@ -1,6 +1,6 @@
 # include "21sh.h"
 
-int		len_dir(char *pwd, t_msh *f)
+int			len_dir(char *pwd, t_msh *f)
 {
 	int		i;
 	struct dirent	*pdirent;
@@ -22,18 +22,35 @@ int		len_dir(char *pwd, t_msh *f)
 	return (i);
 }
 
-char		*get_autocomplete(char *line, t_msh *f)
+void		autocompleteJoin(t_msh *f, char *line)
+{
+	t_line	*tmp;
+	int		i;
+
+	i = -1;
+	tmp = (t_line*)ft_memalloc(sizeof(t_line));
+	tmp->content = ' ';
+	tmp->next = NULL;
+	ft_lstaddbackline(&f->line, tmp);
+	while (line[++i])
+	{
+		tmp = (t_line*)ft_memalloc(sizeof(t_line));
+		tmp->content = line[i];
+		tmp->next = NULL;
+		ft_lstaddbackline(&f->line, tmp);
+	}
+}
+
+void		get_autocomplete(t_msh *f)
 {
 	int		i;
 	struct dirent	*pdirent;
 	DIR		*pep;
 	char	*pwd;
-	char	*tmp;
 
 	pwd = getcwd(NULL, 0);
 	pep = opendir(pwd);
 	i = 0;
-
 	while ((pdirent = readdir(pep)) != NULL)
 	{
 		if (pdirent->d_name[0] == '.')
@@ -43,33 +60,25 @@ char		*get_autocomplete(char *line, t_msh *f)
 		i++;
 	}
 	ft_memdel((void**)&pwd);
-	tmp = ft_strjoin(line, " ");
-	ft_strdel(&line);
-	line = ft_strjoin(tmp, pdirent->d_name);
-	ft_memdel((void**)&tmp);
+	autocompleteJoin(f, pdirent->d_name);
 	closedir(pep);
-	return (line);
 }
 
-char		*auto_complete(char *line)
+void		auto_complete(t_msh *f)
 {
 	struct dirent	*pdirent;
 	DIR				*pdir;
 	char			*pwd;
 	static int		i;
-	t_msh			*f;
 	int				len;
 	struct winsize	win;
 
-	ft_termcmd("bl");
-	f = get_t_msh(NULL);
 	i = 0;
 	pwd = getcwd(NULL, 0);
 	len = len_dir(pwd, f);
 	f->term.win_x = win.ws_col;
 	f->term.win_y = win.ws_row;
 	pdir = opendir(pwd);
-	ft_putchar_fd('\n', 2);
 	ft_termcmd("cd");
 	while ((pdirent = readdir(pdir)) != NULL)
 	{
@@ -90,5 +99,4 @@ char		*auto_complete(char *line)
 	ft_putchar_fd('\n', 2);
 	ft_strdel(&pwd);
 	closedir(pdir);
-	return(line);
 }

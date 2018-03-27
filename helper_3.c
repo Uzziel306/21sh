@@ -18,25 +18,23 @@ int			ft_is_printable(char c)
 // 	printf("!!\n");
 // }
 
-void		ft_str_to_lst(t_msh *f, char **line)
+void		ft_str_to_lst(t_msh *f, char *line)
 {
 	int		i;
 	t_line	*tmp;
-	char	*lolas;
 
-	if (!*line)
-		return ;
-	lolas = ft_strdup(*line);
-	i = -1;
 	ft_lstdeln(&f->line);
-	while (lolas[++i])
+	if (!line)
+		return ;
+	i = -1;
+	while (line[++i])
 	{
 		tmp = (t_line*)ft_memalloc(sizeof(t_line));
-		tmp->content = lolas[i];
+		tmp->content = line[i];
 		tmp->next = NULL;
 		ft_lstaddbackline(&f->line, tmp);
 	}
-	ft_memdel((void**)&lolas);
+	ft_memdel((void**)&line);
 }
 
 void		history_enter(t_msh *f)
@@ -55,27 +53,12 @@ void		history_enter(t_msh *f)
 	}
 }
 
-void		ft_key(int c, t_msh *f, t_line	**l, char **line)
+void		ft_key(char *buf, t_msh *f)
 {
-	if (c == KEY_LEFT || c == KEY_RIGHT || c == KEY_DOWN || c == KEY_UP) //arrows
-		arrows(c, f, line);
-	else if (c == KEY_TAB)
-		tabs(f, line);
-	else if (c == KEY_FN_LEFT || c == KEY_FN_RIGHT)
-		fn_arrows(f, line, c);
-	else if (c == '\n')
-	{
-		if (f->term.ln_len == 0)
-			put_cursor(' ');
-		if (f->term.tab_flag == 1)
-			*line = enter(f, line);
-		f->term.enter = 1;
-		if (f->term.history_flag == 1)
-			history_enter(f);
-		f->term.history_cursor = 0;
-	}
-	else if (c == KEY_DEL)
-			del(f, line, l);
-	else if (c == KEY_ESC)
-		esc(f, line);
+	// ft_putstr_fd("huevos", 2);
+	// exit(3);
+	if (KEY_LEFT ||KEY_RIGHT || KEY_DOWN || KEY_UP) //arrows
+		arrows(buf, f);
+	else if (KEY_FN_LEFT ||KEY_FN_RIGHT)
+		fn_arrows(f, buf);
 }

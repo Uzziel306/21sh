@@ -31,17 +31,24 @@
 # include <sys/ioctl.h>
 # include <signal.h>
 # include <dirent.h>
+# include <ctype.h>
 
-# define KEY_LEFT		4479771
-# define KEY_UP			4283163
-# define KEY_RIGHT		4414235
-# define KEY_DOWN		4348699
+
+# define KEY_RIGHT		(buf[0] == 27 && buf[1] == 91 && buf[2] == 67)
+# define KEY_UP			(buf[0] == 27 && buf[1] == 91 && buf[2] == 65)
+# define KEY_LEFT		(buf[0] == 27 && buf[1] == 91 && buf[2] == 68)
+# define KEY_DOWN		(buf[0] == 27 && buf[1] == 91 && buf[2] == 66)
 # define KEY_ENTER		10
 # define KEY_TAB		9
 # define KEY_DEL		127
 # define KEY_ESC		27
-# define KEY_FN_LEFT	4741915
-# define KEY_FN_RIGHT	4610843
+# define KEY_FN_LEFT	(buf[0] == 27 && buf[1] == 91 && buf[2] == 72)
+# define KEY_FN_RIGHT	(buf[0] == 27 && buf[1] == 91 && buf[2] == 70)
+# define KEY_FN_UP		(buf[0] == 27 && buf[1] == 91 && buf[2] == 53 && buf[3] == 126)
+# define KEY_FN_DOWN	(buf[0] == 27 && buf[1] == 91 && buf[2] == 54 && buf[3] == 126)
+
+typedef struct termios	t_termios;
+extern t_termios	g_origin;
 
 typedef struct		s_term
 {
@@ -133,8 +140,8 @@ int					ft_memdel_int(void **ap);
 int					ft_ismayus(int c);
 t_msh				*get_t_msh(t_msh *f);
 int					ft_is_printable(char c);
-void				ft_key(int c, t_msh *f, t_line	**l, char **line);
-void				ft_str_to_lst(t_msh *f, char **line);
+void				ft_key(char *buf, t_msh *f);
+void				ft_str_to_lst(t_msh *f, char *line);
 void				printlst(t_line **l);
 void				history_enter(t_msh *f);
 /*
@@ -162,41 +169,41 @@ char				*cutting_last_path(char *str);
 ** readterm functions used in the proyect.. readterm.c
 */
 void				starting_env(void);
-char				*get_lines(t_msh *f, t_line **l);
+char				*get_lines(t_msh *f);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);
-void				printing_line(char *line, int cursor);
+void				printing_line(t_line **l, int cursor);
 /*
 ** auto_complete functions used in the proyect.. auto_complete.c
 */
 int					len_dir(char *pwd, t_msh *f);
-char				*auto_complete(char *line);
-char				*get_autocomplete(char *line, t_msh *f);
+void				auto_complete(t_msh *f);
+void				get_autocomplete(t_msh *f);
 /*
 ** lst_line_functions functions used in the proyect.. t_line_functions.c
 */
 void				ft_lstaddnthline(t_line **e, t_line *new, int nb);
 void				ft_lstaddbackline(t_line **alst, t_line *new);
-char				*ft_lst_to_str(t_line **line, t_msh *f);
-char				*get_char(t_line **l, t_msh *f, char c, char *line);
+char				*ft_lst_to_str(t_msh *f);
+void				get_char(t_msh *f, char c);
 void				ft_lstdeln(t_line **alst);
 void				ft_lstdeletenodeline(t_line **e, int nb);
 /*
 ** keycaps functions used in the proyect.. keycaps.c
 */
-void				arrows(int c, t_msh *f, char **line);
-void				tabs(t_msh *f, char **line);
-void				esc(t_msh *f, char **line);
-char				*enter(t_msh *f, char **line);
-void				del(t_msh *f, char **line, t_line	**l);
+void				arrows(char *buf, t_msh *f);
+void				tabs(t_msh *f);
+void				esc(t_msh *f);
+void				enter(t_msh *f);
+void				del(t_msh *f);
 void				history(char *line, t_msh *f);
-void				print_history(char **line, t_msh *f, int o, int i);
-char				*get_history(char *line, t_msh *f);
+void				print_history(t_msh *f, int UpDown);
+void				get_history(char *line, t_msh *f);
 t_list				*ft_returnnode(t_list **head_ref, int position);
 /*
 ** fn_arrows functions used in the proyect.. fn_arrows.c
 */
-void				fn_arrows(t_msh *f, char **line, int c);
+void				fn_arrows(t_msh *f, char *c);
 void				fn_left(t_msh *f, char *line);
 void				fn_right(t_msh *f, char *line);
 #endif

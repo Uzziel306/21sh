@@ -18,6 +18,7 @@ SRC		=	main.c \
 			t_line_functions.c \
 			history.c \
 			fn_arrows.c\
+			pipes.c\
 			keycaps.c
 
 OBJ		= $(SRC:.c=.o)

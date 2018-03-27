@@ -38,6 +38,8 @@ void				get_command(char *str, t_msh *f, t_list *e)
 	{
 		if (matrix[0][0] == '.' && matrix[0][1] == '/')
 			executable(matrix, e);
+		else if (ft_strchr(matrix[0], '|'))
+			pipes(str, f);
 		else if (ft_strcmp(matrix[0], "pwd") == 0)
 			pwd();
 		else if (ft_strcmp(matrix[0], "echo") == 0)
@@ -102,17 +104,12 @@ int					main(void)
 	char			*command;
 	t_msh			f;
 	t_list			*e;
-	char 			*pwd;
 
 	ft_bzero(&f, sizeof(t_msh));
 	get_shell(&f);
 	e = get_env(&f);
-	starting_env();
 	while (42)
 	{
-		pwd = get_last_part();
-		ft_printfcolor("%s%s%s", "@", 33, f.sh.p_user, 33, "$>", 33);
-		ft_printfcolor("%s%s%s", "*[", 34, pwd, 31, "]* ", 34);
 		command = readterm(&f);
 		if (command)
 			if (ft_strcmp(command, "exit") == 0)
@@ -121,7 +118,6 @@ int					main(void)
 			pre_get_command(command, &f, e);
 		ft_strdel(&command);
 		f.term.tab_cursor = 0;
-		ft_strdel(&pwd);
 	}
 	ft_lstdel(&e, ft_bzero);
 	ft_memdel((void**)&command);
