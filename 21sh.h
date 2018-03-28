@@ -172,7 +172,7 @@ void				starting_env(void);
 char				*get_lines(t_msh *f);
 char				*readterm(t_msh *f);
 void				put_cursor(char c);
-void				printing_line(t_line **l, int cursor);
+void				printing_line(t_line **l, int cursor, int flag);
 /*
 ** auto_complete functions used in the proyect.. auto_complete.c
 */

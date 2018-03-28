@@ -77,20 +77,36 @@ void		ft_char(t_msh *f, char c)
 	else if (c == KEY_ESC)
 		esc(f);
 	else if (ft_is_printable(c))
-		get_char(f, c, 0);
+		get_char(f, c);
 }
 
-void			ft_copy(char *buf,t_msh *f)
+
+
+void			ft_copy(char *buf, t_msh *f)
 {
-	return ;
+	int			i;
+
+	i = -1;
+	while(buf[++i] != '\0')
+		ft_char(f, buf[i]);
 }
 
 void			ft_iskeycap(char *buf, t_msh *f)
 {
+	int			i;
+
+	i = -1;
 	if (KEY_LEFT || KEY_UP || KEY_RIGHT || KEY_DOWN || KEY_FN_LEFT || KEY_FN_RIGHT || KEY_FN_DOWN)
 		ft_key(buf, f);
 	else
+	{
+		while (buf[++i] != '\0')
+		{
+			if (!ft_isprint(buf[i]))
+				return ;
+		}
 		ft_copy(buf, f);
+	}
 }
 
 char		*get_lines(t_msh *f)
@@ -118,7 +134,7 @@ char		*get_lines(t_msh *f)
 			ft_char(f, buf[0]);
 		if (f->term.enter == 1)
 			break ;
-		printing_line(&f->line, f->term.ln_cursor);
+		printing_line(&f->line, f->term.ln_cursor, 0);
 		ft_putchar_fd('\n', 2);
 	}
 	line = ft_lst_to_str(f);
