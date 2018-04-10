@@ -12,10 +12,11 @@ void		starting_env(void)
 		ft_error("getting the TERM enviroment");
 	if (tcgetattr(0, &term) != 0)
 		ft_error("didn't store the attributes of termios structure");
-	term.c_lflag &= ~(ICANON | ECHO  | ECHOCTL);
+	term.c_lflag &= ~(ICANON | ECHO);
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSADRAIN, &term);
+	// ft_termcmd("ve");
 	// ft_termcmd("ti");
 	ft_termcmd("vi");
 }
@@ -88,7 +89,7 @@ void			ft_copy(char *buf, t_msh *f)
 
 	i = -1;
 	while(buf[++i] != '\0')
-		ft_char(f, buf[i]);
+		get_char(f, buf[i]);
 }
 
 void			ft_iskeycap(char *buf, t_msh *f)
@@ -100,11 +101,11 @@ void			ft_iskeycap(char *buf, t_msh *f)
 		ft_key(buf, f);
 	else
 	{
-		while (buf[++i] != '\0')
-		{
-			if (!ft_isprint(buf[i]))
-				return ;
-		}
+		// while (buf[++i] != '\0')
+		// {
+		// 	if (!ft_isprint(buf[i]))
+		// 		return ;
+		// }
 		ft_copy(buf, f);
 	}
 }
@@ -120,14 +121,9 @@ char		*get_lines(t_msh *f)
 	put_cursor(' ');
 	while ((endLine = read(0, buf, 2070)) && f->term.enter != 1)
 	{
-		buf[endLine] = '\0';
-		// ft_putnbr(ft_strlen(buf));
-		// ft_putnbr_fd(buf[0], 2);
-		// ft_putnbr_fd(buf[1], 2);
-		// ft_putnbr_fd(buf[2], 2);
-		// exit(2);
-		ft_termcmd("rc");
 		ft_termcmd("cd");
+		buf[endLine] = '\0';
+		ft_termcmd("rc");
 		if (ft_strlen(buf) > 1)
 			ft_iskeycap(buf, f);
 		else
@@ -135,7 +131,8 @@ char		*get_lines(t_msh *f)
 		if (f->term.enter == 1)
 			break ;
 		printing_line(&f->line, f->term.ln_cursor, 0);
-		ft_putchar_fd('\n', 2);
+		// ft_putchar_fd('\n', 2);
+		ft_termcmd("rc");
 	}
 	line = ft_lst_to_str(f);
 	ft_lstdeln(&f->line);
@@ -147,7 +144,10 @@ char			*readterm(t_msh *f)
 {
 	char		*line;
 	char		*pwd;
+	struct winsize	win;
 
+	f->term.win_x = win.ws_col;
+	f->term.win_y = win.ws_row;
 	pwd = get_last_part();
 	ft_printfcolor("%s%s%s", "@", 33, f->sh.p_user, 33, "$>", 33);
 	ft_printfcolor("%s%s%s", "*[", 34, pwd, 31, "]* ", 34);
