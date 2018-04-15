@@ -62,6 +62,7 @@ typedef struct		s_term
 	int				max;
 	int				win_x;
 	int				win_y;
+	int				cols;
 	int				tab_flag;
 	int				esc_flag;
 	int				enter;
@@ -176,9 +177,10 @@ void				printing_line(t_line **l, int cursor, int flag);
 /*
 ** auto_complete functions used in the proyect.. auto_complete.c
 */
-int					len_dir(char *pwd, t_msh *f);
-void				auto_complete(t_msh *f);
+int					len_dir(char *pwd, t_msh *f, char *str);
+void				auto_complete(t_msh *f, char *line);
 void				get_autocomplete(t_msh *f);
+int					canUseAutoComplete(char *line);
 /*
 ** lst_line_functions functions used in the proyect.. t_line_functions.c
 */

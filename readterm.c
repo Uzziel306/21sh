@@ -101,11 +101,6 @@ void			ft_iskeycap(char *buf, t_msh *f)
 		ft_key(buf, f);
 	else
 	{
-		// while (buf[++i] != '\0')
-		// {
-		// 	if (!ft_isprint(buf[i]))
-		// 		return ;
-		// }
 		ft_copy(buf, f);
 	}
 }
@@ -121,7 +116,7 @@ char		*get_lines(t_msh *f)
 	put_cursor(' ');
 	while ((endLine = read(0, buf, 2070)) && f->term.enter != 1)
 	{
-		ft_termcmd("cd");
+		(f->term.tab_flag == 1) ? ft_termcmd("ce") : ft_termcmd("cd");
 		buf[endLine] = '\0';
 		ft_termcmd("rc");
 		if (ft_strlen(buf) > 1)
@@ -131,7 +126,6 @@ char		*get_lines(t_msh *f)
 		if (f->term.enter == 1)
 			break ;
 		printing_line(&f->line, f->term.ln_cursor, 0);
-		// ft_putchar_fd('\n', 2);
 		ft_termcmd("rc");
 	}
 	line = ft_lst_to_str(f);

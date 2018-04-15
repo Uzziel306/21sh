@@ -29,12 +29,14 @@ void		tabs(t_msh *f)
 	else
 	{
 		line = ft_lst_to_str(f);
-		f->term.tab_flag = 1;
-		ft_termcmd("sc");
-		ft_termcmd("ce");
-		ft_putstr_fd(line, 2);
-		ft_putchar_fd('\n', 2);
-		auto_complete(f);
+		if (canUseAutoComplete(line))
+		{
+			f->term.tab_flag = 1;
+			ft_termcmd("sc");
+			ft_termcmd("cd");
+			ft_putstr_fd(line, 2);
+			auto_complete(f, line);
+		}
 		ft_strdel(&line);
 	}
 }

@@ -1,15 +1,40 @@
 # include "21sh.h"
 
-int			len_dir(char *pwd, t_msh *f)
+int			len_dir(char *pwd, t_msh *f, char *str)
 {
 	int		i;
+	struct dirent	*pdirent;
+	DIR				*pep;
+	int				tmp;
+	int				len;
+
+	pep = opendir(pwd);
+	i = 0;
+	while ((pdirent = readdir(pep)) != NULL)
+	{
+		len = ft_strlen(str);
+		if (pdirent->d_name[0] == '.' && str[0] != '.')
+			continue ;
+		if (ft_strncmp(str, pdirent->d_name, len) == 0)
+		{
+			if (f->term.max < (tmp = (int)ft_strlen(pdirent->d_name)))
+				f->term.max = tmp;
+			i++;
+		}
+	}
+	closedir(pep);
+	return (i);
+}
+
+int					len_dirBasic(char *pwd, t_msh *f)
+{
+	int				i;
 	struct dirent	*pdirent;
 	DIR				*pep;
 	int				tmp;
 
 	pep = opendir(pwd);
 	i = 0;
-
 	while ((pdirent = readdir(pep)) != NULL)
 	{
 		if (pdirent->d_name[0] == '.')
@@ -41,7 +66,7 @@ void		autocompleteJoin(t_msh *f, char *line)
 	}
 }
 
-void		get_autocomplete(t_msh *f)
+void				get_autocomplete(t_msh *f)
 {
 	int		i;
 	struct dirent	*pdirent;
@@ -64,39 +89,86 @@ void		get_autocomplete(t_msh *f)
 	closedir(pep);
 }
 
-void		auto_complete(t_msh *f)
+void				printFile(t_msh *f, char *str, int *index)
+{
+	int				white_spaces;
+	int				i;
+
+	i = -1;
+	if (((*index % f->term.cols) == 0) && *index > 0)
+			ft_putchar_fd('\n', 2);
+	white_spaces = (f->term.max - (int)ft_strlen(str));
+	if (*index == f->term.tab_cursor)
+		ft_printfcolor("%s ", str, 46);
+	else
+		ft_printfcolor("%s ", str, 36);
+	*index += 1;
+	while (++i < white_spaces + 3)
+		ft_putchar_fd(' ', 2);
+}
+
+void				printDirectori(t_msh *f, char *pwd, char *str)
 {
 	struct dirent	*pdirent;
 	DIR				*pdir;
-	char			*pwd;
-	static int		i;
-	int				len;
-	struct winsize	win;
+	int				i;
+	double			cols;
 
-	i = 0;
-	pwd = getcwd(NULL, 0);
-	len = len_dir(pwd, f);
-	f->term.win_x = win.ws_col;
-	f->term.win_y = win.ws_row;
+	f->term.cols = (f->term.win_x / (f->term.max + 2));
 	pdir = opendir(pwd);
-	ft_termcmd("cd");
+	ft_putchar_fd('\n', 2);
+	i = 0;
 	while ((pdirent = readdir(pdir)) != NULL)
 	{
-		if (pdirent->d_name[0] != '.')
+		if (str != NULL)
 		{
-			if (i == f->term.tab_cursor)
-				ft_termcmd("so");
-			ft_printfcolor("%s ", pdirent->d_name, 35);
-			ft_putchar_fd(' ', 2);
-			ft_termcmd("se");
-			i++;
+			if (ft_strncmp(str, pdirent->d_name, ft_strlen(str)) == 0)
+				printFile(f, pdirent->d_name, &i);
 		}
+		else if (pdirent->d_name[0] != '.')
+			printFile(f, pdirent->d_name, &i);
 	}
+	closedir(pdir);
 	ft_termcmd("rc");
+}
+
+int				canUseAutoComplete(char *line)
+{
+	int				i;
+	int				len;
+
+	len = ft_strlen(line);
+	i				= -1;
+	while(line[++i] != '\0')
+	{
+		if ((i + 1) <= len)
+			if (ft_isprint(line[i]) && ft_isspace(line[i + 1]))
+				return (1);
+	}
+	return (0);
+}
+
+void				auto_complete(t_msh *f, char *line)
+{
+	int				len;
+	struct winsize	win;
+	char			*pwd;
+	char			**autoCompleteMtx;
+
+	pwd = getcwd(NULL, 0);
+	len = 0;
+	autoCompleteMtx = ft_split_whitespaces(line);
+	if (ft_matrixlen(autoCompleteMtx) > 1)
+		len = len_dir(pwd, f, autoCompleteMtx[1]);
+	else
+		len = len_dirBasic(pwd, f);
+	ioctl(STDIN_FILENO, TIOCGWINSZ, &win);
+	f->term.win_x = win.ws_col;
+	f->term.win_y = win.ws_row;
+	printDirectori(f, pwd, autoCompleteMtx[1]);
 	f->term.tab_cursor += 1;
 	if (f->term.tab_cursor == len)
 		f->term.tab_cursor = 0;
-	ft_putchar_fd('\n', 2);
 	ft_strdel(&pwd);
-	closedir(pdir);
+	ft_free_mtx(autoCompleteMtx);
 }
