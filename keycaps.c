@@ -37,6 +37,8 @@ void		tabs(t_msh *f)
 			ft_putstr_fd(line, 2);
 			auto_complete(f, line);
 		}
+		else
+			ft_termcmd("bl");
 		ft_strdel(&line);
 	}
 }
@@ -64,12 +66,15 @@ void		esc(t_msh *f)
 
 void		enter(t_msh *f)
 {
+	char		*line;
+
+	line = ft_lst_to_str(f);
 	ft_termcmd("bl");
 	ft_termcmd("cd");
 	if (f->term.tab_flag == 1)
 	{
 		f->term.tab_flag = 0;
-		get_autocomplete(f);
+		autocompleteJoin(f, line);
 	}
 }
 

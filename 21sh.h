@@ -66,6 +66,7 @@ typedef struct		s_term
 	int				tab_flag;
 	int				esc_flag;
 	int				enter;
+	char			*autoCompleteStr;
 	t_list			*x;
 }					t_term;
 
@@ -179,8 +180,8 @@ void				printing_line(t_line **l, int cursor, int flag);
 */
 int					len_dir(char *pwd, t_msh *f, char *str);
 void				auto_complete(t_msh *f, char *line);
-void				get_autocomplete(t_msh *f);
 int					canUseAutoComplete(char *line);
+void				autocompleteJoin(t_msh *f, char *line);
 /*
 ** lst_line_functions functions used in the proyect.. t_line_functions.c
 */

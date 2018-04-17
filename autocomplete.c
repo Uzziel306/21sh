@@ -8,6 +8,8 @@ int			len_dir(char *pwd, t_msh *f, char *str)
 	int				tmp;
 	int				len;
 
+	printf("%s\n", str);
+	exit(0);
 	pep = opendir(pwd);
 	i = 0;
 	while ((pdirent = readdir(pep)) != NULL)
@@ -47,17 +49,14 @@ int					len_dirBasic(char *pwd, t_msh *f)
 	return (i);
 }
 
-void		autocompleteJoin(t_msh *f, char *line)
+void		complexAutoJoin(t_msh *f, char *line)
 {
-	t_line	*tmp;
 	int		i;
+	t_line	*tmp;
 
 	i = -1;
-	tmp = (t_line*)ft_memalloc(sizeof(t_line));
-	tmp->content = ' ';
-	tmp->next = NULL;
-	ft_lstaddbackline(&f->line, tmp);
-	while (line[++i])
+	ft_lstdeln(&f->line);
+	while(line[++i] != '\0')
 	{
 		tmp = (t_line*)ft_memalloc(sizeof(t_line));
 		tmp->content = line[i];
@@ -66,27 +65,28 @@ void		autocompleteJoin(t_msh *f, char *line)
 	}
 }
 
-void				get_autocomplete(t_msh *f)
+void		autocompleteJoin(t_msh *f, char *line)
 {
+	t_line	*tmp;
 	int		i;
-	struct dirent	*pdirent;
-	DIR		*pep;
-	char	*pwd;
+	char	**secondWord;
 
-	pwd = getcwd(NULL, 0);
-	pep = opendir(pwd);
-	i = 0;
-	while ((pdirent = readdir(pep)) != NULL)
+	secondWord = ft_split_whitespaces(line);
+	if (ft_matrixlen(secondWord) > 1)
+		complexAutoJoin(f, secondWord[0]);
+	i = -1;
+	tmp = (t_line*)ft_memalloc(sizeof(t_line));
+	tmp->content = ' ';
+	tmp->next = NULL;
+	ft_lstaddbackline(&f->line, tmp);
+	while (f->term.autoCompleteStr[++i])
 	{
-		if (pdirent->d_name[0] == '.')
-			f->term.tab_cursor += 1;
-		if (i + 1 == f->term.tab_cursor)
-			break ;
-		i++;
+		tmp = (t_line*)ft_memalloc(sizeof(t_line));
+		tmp->content = f->term.autoCompleteStr[i];
+		tmp->next = NULL;
+		ft_lstaddbackline(&f->line, tmp);
 	}
-	ft_memdel((void**)&pwd);
-	autocompleteJoin(f, pdirent->d_name);
-	closedir(pep);
+	ft_free_mtx(secondWord);
 }
 
 void				printFile(t_msh *f, char *str, int *index)
@@ -99,9 +99,14 @@ void				printFile(t_msh *f, char *str, int *index)
 			ft_putchar_fd('\n', 2);
 	white_spaces = (f->term.max - (int)ft_strlen(str));
 	if (*index == f->term.tab_cursor)
-		ft_printfcolor("%s ", str, 46);
+	{
+		if (f->term.autoCompleteStr != NULL)
+			ft_strdel(&f->term.autoCompleteStr);
+		ft_printfcolor("%s", str, 46);
+		f->term.autoCompleteStr = ft_strdup(str);
+	}
 	else
-		ft_printfcolor("%s ", str, 36);
+		ft_printfcolor("%s", str, 36);
 	*index += 1;
 	while (++i < white_spaces + 3)
 		ft_putchar_fd(' ', 2);
@@ -156,10 +161,10 @@ void				auto_complete(t_msh *f, char *line)
 	char			**autoCompleteMtx;
 
 	pwd = getcwd(NULL, 0);
-	len = 0;
 	autoCompleteMtx = ft_split_whitespaces(line);
+	len = ft_matrixlen(autoCompleteMtx);
 	if (ft_matrixlen(autoCompleteMtx) > 1)
-		len = len_dir(pwd, f, autoCompleteMtx[1]);
+		len = len_dir(pwd, f, autoCompleteMtx[len -1]);
 	else
 		len = len_dirBasic(pwd, f);
 	ioctl(STDIN_FILENO, TIOCGWINSZ, &win);

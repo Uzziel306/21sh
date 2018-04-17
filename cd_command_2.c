@@ -27,7 +27,7 @@ int			general(char *direction, char	*old_pwd, t_list *e)
 		ft_memdel((void**)&new_pwd);
 		return (1);
 	}
-	ft_printfcolor("%s%s\n", "cd: no such file or directory:", 31, direction, 31);
+	ft_printfcolor("%s%s\n", "cd: no such file or directory: ", 31, direction, 31);
 	return (0);
 }
 
